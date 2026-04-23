@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3BichCoffee</title>
+    <title>3BichCoffee & TEA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Quicksand -->
@@ -426,7 +426,7 @@
         ];
 
         // --- 2. LOGIC ĐIỀU HƯỚNG VÀ FILTER ---
-        function navigate(viewId) {
+        function navigate(viewId, addToHistory = true) {
             // Ẩn tất cả các view
             const views = document.querySelectorAll('.page-view');
             views.forEach(view => {
@@ -437,11 +437,34 @@
             const activeView = document.getElementById(`view-${viewId}`);
             if (activeView) {
                 activeView.classList.add('active');
+            } else {
+                document.getElementById('view-index').classList.add('active');
+                viewId = 'index';
+            }
+
+            // Cập nhật lịch sử trình duyệt để nút Back trên điện thoại hoạt động
+            if (addToHistory) {
+                history.pushState({ view: viewId }, '', '#' + viewId);
             }
 
             // Cuộn lên đầu trang
             window.scrollTo(0, 0);
         }
+
+        // Lắng nghe sự kiện bấm nút Back/Forward trên trình duyệt và thiết bị di động
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.view) {
+                navigate(event.state.view, false);
+            } else {
+                const hash = window.location.hash.replace('#', '') || 'index';
+                // Nếu back về nhầm một trang detail trống (do mất state data), tự động đẩy về list
+                if (hash === 'detail') {
+                    navigate('list', false);
+                } else {
+                    navigate(hash, false);
+                }
+            }
+        });
 
         // Lọc đồ uống
         function filterCoffees(category, btnElement) {
@@ -527,6 +550,18 @@
         // Khởi tạo trang khi tải xong
         window.onload = () => {
             renderSanPhams();
+
+            // Khởi tạo trạng thái lịch sử ban đầu để tương thích nút Back
+            const initialView = window.location.hash.replace('#', '') || 'index';
+
+            if (initialView === 'detail') {
+                // Nếu người dùng tải mới lại trang chi tiết (F5), điều hướng về danh sách để tránh hiển thị trống
+                navigate('list', false);
+                history.replaceState({ view: 'list' }, '', '#list');
+            } else {
+                navigate(initialView, false);
+                history.replaceState({ view: initialView }, '', '#' + initialView);
+            }
         };
     </script>
 </body>

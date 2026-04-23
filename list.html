@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Bích Coffee - Thực đơn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <header class="bg-red-800 text-white sticky top-0 z-50 shadow-md">
+        <div class="container mx-auto px-4 lg:px-8 h-20 flex justify-between items-center">
+            <div class="flex items-center space-x-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="bg-white text-red-800 p-1.5 rounded-full h-10 w-10 flex items-center justify-center"><i
+                        class="ph-fill ph-spade text-2xl"></i></div>
+                <span style="font-family: 'Oswald', sans-serif;" class="text-2xl uppercase tracking-tighter">3 Bích
+                    Coffee</span>
+            </div>
+            <nav class="hidden md:flex space-x-6 font-bold uppercase text-[10px] tracking-widest">
+                <a href="index.html" class="hover:text-red-200 transition">Trang chủ</a>
+                <a href="list.html" class="text-red-200 border-b-2 border-red-200 pb-1">Thực đơn</a>
+                <a href="info.html" class="hover:text-red-200 transition">Vị trí</a>
+            </nav>
+            <i class="ph ph-shopping-cart text-2xl"></i>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 lg:px-8 py-12">
+        <div class="flex flex-col lg:flex-row gap-10">
+            <!-- Bộ lọc bên cạnh -->
+            <aside class="hidden lg:block w-1/4">
+                <div class="bg-white rounded-3xl shadow-sm p-8 sticky top-28 border border-gray-100">
+                    <h2 class="text-xl font-black mb-6 uppercase tracking-tighter border-b-2 border-red-800 pb-2">Danh
+                        mục</h2>
+                    <ul class="space-y-2" id="desktopCategories"></ul>
+                </div>
+            </aside>
+
+            <!-- Cuộn danh mục trên di động -->
+            <div class="lg:hidden flex overflow-x-auto pb-4 mb-4 space-x-2 scrollbar-hide" id="mobileCategories"></div>
+
+            <!-- Lưới sản phẩm -->
+            <section class="w-full lg:w-3/4">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6" id="productGrid"></div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const categories = [
+            { id: 'all', name: 'Tất cả' },
+            { id: 'coffee', name: 'Cà Phê' },
+            { id: 'tea', name: 'Trà Trái Cây' },
+            { id: 'special', name: 'Món Đặc Biệt' }
+        ];
+
+        const products = [
+            { id: 1, name: 'Cà Phê Đen', price: 12000, category: 'coffee', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=500&q=80' },
+            { id: 2, name: 'Cà Phê Sữa', price: 15000, category: 'coffee', image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=500&q=80' },
+            { id: 3, name: 'Bạc Sỉu Đá', price: 20000, category: 'coffee', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=500&q=80' },
+            { id: 4, name: 'Cà Phê Kem Muối', price: 25000, category: 'special', image: 'https://images.unsplash.com/photo-1517701550927-30cf0b081792?auto=format&fit=crop&w=500&q=80', isNew: true },
+            { id: 7, name: 'Trà Tắc', price: 10000, category: 'tea', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=500&q=80' },
+            { id: 8, name: 'Trà Đào Dầm', price: 20000, category: 'tea', image: 'https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?auto=format&fit=crop&w=500&q=80' },
+            { id: 10, name: 'Milo Sữa Dầm', price: 18000, category: 'special', image: 'https://images.unsplash.com/photo-1544145945-f904253d0c7b?auto=format&fit=crop&w=500&q=80' }
+        ];
+
+        let activeCategory = 'all';
+
+        function render() {
+            // Danh mục máy tính
+            document.getElementById('desktopCategories').innerHTML = categories.map(cat => `
+                <li><button onclick="filter('${cat.id}')" class="w-full text-left py-3 px-4 rounded-xl transition ${activeCategory === cat.id ? 'bg-red-800 text-white font-bold' : 'text-gray-500 hover:bg-gray-50'}">${cat.name}</button></li>
+            `).join('');
+
+            // Danh mục di động
+            document.getElementById('mobileCategories').innerHTML = categories.map(cat => `
+                <button onclick="filter('${cat.id}')" class="whitespace-nowrap px-6 py-2.5 rounded-full font-bold border-2 transition ${activeCategory === cat.id ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-400 border-gray-100'} text-xs">${cat.name}</button>
+            `).join('');
+
+            // Lưới sản phẩm
+            const filtered = activeCategory === 'all' ? products : products.filter(p => p.category === activeCategory);
+            document.getElementById('productGrid').innerHTML = filtered.map(p => `
+                <div class="product-card bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden cursor-pointer hover:shadow-xl transition duration-500" onclick="window.location.href='detail.html?id=${p.id}'">
+                    <div class="aspect-square relative overflow-hidden">
+                        ${p.isNew ? '<span class="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full z-10 shadow-lg">MỚI</span>' : ''}
+                        <img src="${p.image}" class="w-full h-full object-cover transition duration-700" />
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="font-bold text-gray-800 text-xs uppercase line-clamp-1 mb-2">${p.name}</h3>
+                        <p class="text-red-800 font-black text-lg">${p.price.toLocaleString('vi-VN')}đ</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filter(id) { activeCategory = id; render(); }
+        render();
+    </script>
+</body>
+
+</html>
