@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3BichCoffee</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Quicksand -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        coffee: {
+                            50: '#fdf8f5',
+                            100: '#f8ede7',
+                            200: '#eedbd0',
+                            300: '#e1c1af',
+                            400: '#d0a086',
+                            500: '#c28564',
+                            600: '#b46d4c',
+                            700: '#96553d',
+                            800: '#7c4735',
+                            900: '#643b2d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fdf8f5;
+            color: #4a3f35;
+        }
+
+        .page-view {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Image fallback background */
+        .img-placeholder {
+            background-color: #eedbd0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation Header -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigate('index')">
+                    <i class="fa-solid fa-mug-hot text-coffee-600 text-3xl mr-3"></i>
+                    <span class="font-bold text-2xl text-coffee-800 tracking-tight">3BichCoffee</span>
+                </div>
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <button onclick="navigate('index')"
+                        class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors">Trang Chủ</button>
+                    <button onclick="navigate('list')"
+                        class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors">Thực Đơn</button>
+                    <button onclick="navigate('info')"
+                        class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors">Giới
+                        Thiệu</button>
+                </nav>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()"
+                        class="text-coffee-800 hover:text-coffee-600 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu (hidden by default) -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-white border-t border-coffee-100 pb-4 shadow-lg absolute w-full">
+            <button onclick="navigate('index'); toggleMobileMenu()"
+                class="block w-full text-left px-6 py-3 text-coffee-800 hover:bg-coffee-50 font-medium">Trang
+                Chủ</button>
+            <button onclick="navigate('list'); toggleMobileMenu()"
+                class="block w-full text-left px-6 py-3 text-coffee-800 hover:bg-coffee-50 font-medium">Thực
+                Đơn</button>
+            <button onclick="navigate('info'); toggleMobileMenu()"
+                class="block w-full text-left px-6 py-3 text-coffee-800 hover:bg-coffee-50 font-medium">Giới
+                Thiệu</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+
+        <!-- 1. VIEW: INDEX (Trang Chủ) -->
+        <div id="view-index" class="page-view active">
+            <!-- Hero Section -->
+            <section class="relative bg-coffee-900 text-white overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1600&q=80"
+                    alt="Coffee background" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                <div
+                    class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40 flex flex-col items-center text-center">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">Đánh Thức Ngày Mới <br />
+                        Cùng Hương Vị Đích Thực</h1>
+                    <p class="text-lg md:text-xl text-coffee-100 max-w-2xl mb-10">Từng hạt cà phê được chọn lọc kỹ
+                        lưỡng, rang mộc hoàn toàn để giữ lại trọn vẹn sự tinh túy của tự nhiên.</p>
+                    <button onclick="navigate('list')"
+                        class="bg-coffee-600 hover:bg-coffee-500 text-white px-8 py-3 rounded-full text-lg font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        Khám Phá Thực Đơn
+                    </button>
+                </div>
+            </section>
+
+            <!-- Featured Coffees Section -->
+            <section class="py-16 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-coffee-800 mb-4">Món Nổi Bật</h2>
+                        <div class="h-1 w-20 bg-coffee-500 mx-auto rounded"></div>
+                    </div>
+                    <div id="featured-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Featured items will be injected here by JS -->
+                    </div>
+                    <div class="text-center mt-12">
+                        <button onclick="navigate('list')"
+                            class="text-coffee-600 font-semibold hover:text-coffee-800 underline decoration-2 underline-offset-4">Xem
+                            tất cả các món &rarr;</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 2. VIEW: LIST (Danh Sách Sản Phẩm) -->
+        <div id="view-list" class="page-view">
+            <section class="py-12 bg-coffee-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h1 class="text-4xl font-bold text-coffee-800 mb-4">Thực Đơn Của Chúng Tôi</h1>
+                        <p class="text-coffee-600 max-w-2xl mx-auto">Từ những ly cà phê đen truyền thống đậm đà đến
+                            những cốc latte nghệ thuật, chúng tôi có mọi thứ để thỏa mãn niềm đam mê cà phê của bạn.</p>
+                    </div>
+
+                    <!-- Filter/Categories (Interactive) -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-10">
+                        <button onclick="filterCoffees('all', this)"
+                            class="filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors">Tất
+                            cả</button>
+                        <button onclick="filterCoffees('Cà Phê Truyền Thống', this)"
+                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">Cà
+                            Phê Truyền Thống</button>
+                        <button onclick="filterCoffees('Cà Phê Máy', this)"
+                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">Cà
+                            Phê Máy</button>
+                    </div>
+
+                    <!-- All Coffees Grid -->
+                    <div id="all-coffees-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- All items will be injected here by JS -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 3. VIEW: DETAIL (Chi Tiết Sản Phẩm) -->
+        <div id="view-detail" class="page-view">
+            <section class="py-12 bg-white">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <button onclick="navigate('list')"
+                        class="text-coffee-600 hover:text-coffee-800 font-medium mb-8 flex items-center">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Trở lại thực đơn
+                    </button>
+
+                    <div class="bg-coffee-50 rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row">
+                        <!-- Product Image -->
+                        <div class="md:w-1/2 relative h-80 md:h-auto img-placeholder">
+                            <img id="detail-img" src="" alt="Coffee Image"
+                                class="absolute inset-0 w-full h-full object-cover">
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                            <div class="uppercase tracking-wide text-sm text-coffee-500 font-bold mb-2"
+                                id="detail-category">Cà Phê</div>
+                            <h2 id="detail-title" class="text-3xl md:text-4xl font-bold text-coffee-900 mb-4">Tên Sản
+                                Phẩm</h2>
+                            <p id="detail-price" class="text-2xl font-bold text-coffee-600 mb-6">0đ</p>
+
+                            <p id="detail-desc" class="text-coffee-700 mb-8 leading-relaxed">
+                                Mô tả chi tiết sản phẩm sẽ hiện ở đây.
+                            </p>
+
+                            <div class="mb-8">
+                                <h3 class="font-bold text-coffee-900 mb-3">Thành phần:</h3>
+                                <ul id="detail-ingredients" class="list-disc list-inside text-coffee-700 space-y-1">
+                                    <!-- Ingredients go here -->
+                                </ul>
+                            </div>
+
+                            <button onclick="alert('Tính năng đặt hàng đang được phát triển!')"
+                                class="w-full bg-coffee-800 hover:bg-coffee-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center">
+                                <i class="fa-solid fa-cart-plus mr-2"></i> Đặt Mua Ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 4. VIEW: INFO (Giới Thiệu) -->
+        <div id="view-info" class="page-view">
+            <!-- About Hero -->
+            <section class="py-16 bg-coffee-800 text-white">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6">Câu Chuyện Của 3BichCoffee</h1>
+                    <p class="text-lg text-coffee-100">Bắt nguồn từ tình yêu với hạt cà phê Việt Nam và mong muốn tạo ra
+                        một không gian bình yên giữa lòng thành phố nhộn nhịp.</p>
+                </div>
+            </section>
+
+            <!-- Content section -->
+            <section class="py-16 bg-white">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-12 items-center">
+                    <div class="md:w-1/2">
+                        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80"
+                            alt="Cafe interior" class="rounded-2xl shadow-xl w-full h-auto">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-3xl font-bold text-coffee-900 mb-6">Hơn cả một thức uống</h2>
+                        <p class="text-coffee-700 mb-4 leading-relaxed">Được thành lập vào năm 2020, 3BichCoffee không
+                            chỉ là nơi bạn đến để thưởng thức một ly cà phê ngon, mà còn là trạm dừng chân để tìm lại sự
+                            cân bằng trong cuộc sống.</p>
+                        <p class="text-coffee-700 mb-6 leading-relaxed">Chúng tôi cam kết sử dụng 100% hạt cà phê nội
+                            địa, được rang mộc theo tiêu chuẩn khắt khe nhất để mang lại hương vị nguyên bản, sạch và an
+                            toàn cho sức khỏe.</p>
+
+                        <div class="bg-coffee-50 p-6 rounded-xl border-l-4 border-coffee-500">
+                            <h3 class="font-bold text-coffee-900 mb-2">Triết lý của chúng tôi</h3>
+                            <p class="text-coffee-700 italic">"Mỗi tách cà phê là một tác phẩm nghệ thuật, được pha chế
+                                bằng cả trái tim."</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Info & Location -->
+            <section class="py-16 bg-coffee-100">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Location -->
+                        <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                            <div
+                                class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <h3 class="font-bold text-xl text-coffee-900 mb-2">Địa Chỉ</h3>
+                            <p class="text-coffee-600">123 Đường Sách, Quận 1,<br>TP. Hồ Chí Minh</p>
+                        </div>
+                        <!-- Hours -->
+                        <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                            <div
+                                class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <h3 class="font-bold text-xl text-coffee-900 mb-2">Giờ Mở Cửa</h3>
+                            <p class="text-coffee-600">Thứ 2 - Thứ 6: 07:00 - 22:00<br>Cuối tuần: 08:00 - 23:00</p>
+                        </div>
+                        <!-- Contact -->
+                        <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                            <div
+                                class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <h3 class="font-bold text-xl text-coffee-900 mb-2">Liên Hệ</h3>
+                            <p class="text-coffee-600">Điện thoại: 0123 456 789<br>Email: hello@3bichcoffee.vn</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-coffee-900 text-coffee-200 py-12 border-t border-coffee-800">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            <div>
+                <div class="flex items-center justify-center md:justify-start mb-4">
+                    <i class="fa-solid fa-mug-hot text-2xl mr-2 text-white"></i>
+                    <span class="font-bold text-2xl text-white">3BichCoffee</span>
+                </div>
+                <p class="text-sm">Mang hương vị cà phê nguyên bản đến mọi người. Nơi cảm xúc bắt đầu từ những giọt cà
+                    phê đậm đà.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Đường Dẫn</h4>
+                <ul class="space-y-2">
+                    <li><button onclick="navigate('index')" class="hover:text-white transition-colors">Trang
+                            Chủ</button></li>
+                    <li><button onclick="navigate('list')" class="hover:text-white transition-colors">Thực Đơn</button>
+                    </li>
+                    <li><button onclick="navigate('info')" class="hover:text-white transition-colors">Giới
+                            Thiệu</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Kết Nối</h4>
+                <div class="flex justify-center md:justify-start space-x-4">
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-coffee-800 flex items-center justify-center hover:bg-coffee-600 hover:text-white transition-colors"><i
+                            class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-coffee-800 flex items-center justify-center hover:bg-coffee-600 hover:text-white transition-colors"><i
+                            class="fa-brands fa-instagram"></i></a>
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-coffee-800 flex items-center justify-center hover:bg-coffee-600 hover:text-white transition-colors"><i
+                            class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-12 pt-8 border-t border-coffee-800 text-sm">
+            <p>&copy; 2024 3BichCoffee. Đã đăng ký bản quyền.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Navigation and Data Rendering -->
+    <script>
+        // --- 1. DỮ LIỆU SẢN PHẨM (MOCK DATA) ---
+        const coffees = [
+            {
+                id: 'cp-sua-da',
+                name: 'Cà Phê Sữa Đá',
+                price: 29000,
+                category: 'Cà Phê Truyền Thống',
+                desc: 'Thức uống đặc trưng của Việt Nam. Sự kết hợp hoàn hảo giữa cà phê phin đậm đà và sữa đặc ngọt ngào, thêm đá mát lạnh.',
+                ingredients: ['Cà phê Robusta nguyên chất', 'Sữa đặc có đường', 'Đá viên'],
+                image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&w=600&q=80',
+                featured: true
+            },
+            {
+                id: 'bac-xiu',
+                name: 'Bạc Xỉu',
+                price: 35000,
+                category: 'Cà Phê Truyền Thống',
+                desc: 'Phù hợp cho những ai thích vị béo ngọt nhiều hơn vị đắng. "Sữa đá pha thêm chút cà phê" theo phong cách Sài Gòn xưa.',
+                ingredients: ['Sữa tươi', 'Sữa đặc', '1 shot cà phê Espresso/Phin', 'Đá'],
+                image: 'https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=600&q=80',
+                featured: true
+            },
+            {
+                id: 'cp-den',
+                name: 'Cà Phê Đen Đá',
+                price: 25000,
+                category: 'Cà Phê Truyền Thống',
+                desc: 'Nguyên bản và mạnh mẽ. Lựa chọn tuyệt vời để bắt đầu một ngày mới đầy năng lượng với vị đắng đặc trưng.',
+                ingredients: ['Cà phê nguyên chất (Robusta & Arabica)', 'Đường (tùy chọn)', 'Đá viên'],
+                image: 'https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?auto=format&fit=crop&w=600&q=80',
+                featured: false
+            },
+            {
+                id: 'cp-trung',
+                name: 'Cà Phê Trứng',
+                price: 45000,
+                category: 'Đặc Sản',
+                desc: 'Đặc sản của Hà Nội. Lớp kem trứng béo ngậy, vàng ươm nổi bật trên nền cà phê đen nóng hổi, đắng nhẹ.',
+                ingredients: ['Lòng đỏ trứng gà ta', 'Mật ong / Sữa đặc', 'Cà phê phin nóng'],
+                image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80',
+                featured: true
+            },
+            {
+                id: 'latte',
+                name: 'Latte',
+                price: 49000,
+                category: 'Cà Phê Máy',
+                desc: 'Nghệ thuật pha chế Ý. Sự hòa quyện mượt mà giữa một shot Espresso đậm đặc và lớp sữa nóng đánh bọt mịn màng.',
+                ingredients: ['Espresso', 'Sữa tươi thanh trùng', 'Lớp bọt sữa mỏng'],
+                image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
+                featured: false
+            },
+            {
+                id: 'cold-brew',
+                name: 'Cold Brew Cam Sả',
+                price: 55000,
+                category: 'Cà Phê Máy / Ủ Lạnh',
+                desc: 'Cà phê ủ lạnh thanh mát, kết hợp cùng hương vị cam vàng và sả tươi, tạo nên thức uống giải khát tuyệt vời.',
+                ingredients: ['Cà phê Arabica ủ lạnh 18 tiếng', 'Cam vàng', 'Sả tươi', 'Đường nước'],
+                image: 'https://images.unsplash.com/photo-1461023058943-0708e52e5058?auto=format&fit=crop&w=600&q=80',
+                featured: false
+            }
+        ];
+
+        // --- 2. LOGIC ĐIỀU HƯỚNG VÀ FILTER ---
+        function navigate(viewId) {
+            // Ẩn tất cả các view
+            const views = document.querySelectorAll('.page-view');
+            views.forEach(view => {
+                view.classList.remove('active');
+            });
+
+            // Hiển thị view được chọn
+            const activeView = document.getElementById(`view-${viewId}`);
+            if (activeView) {
+                activeView.classList.add('active');
+            }
+
+            // Cuộn lên đầu trang
+            window.scrollTo(0, 0);
+        }
+
+        // Lọc đồ uống
+        function filterCoffees(category, btnElement) {
+            // Cập nhật lại UI cho các nút bấm (đổi màu nút đang được chọn)
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.className = 'filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors';
+            });
+            btnElement.className = 'filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors';
+
+            // Xử lý lọc dữ liệu và render lại
+            const allCoffeesGrid = document.getElementById('all-coffees-grid');
+            if (category === 'all') {
+                allCoffeesGrid.innerHTML = coffees.map(taoTheSanPham).join('');
+            } else {
+                const filtered = coffees.filter(c => c.category.includes(category));
+                allCoffeesGrid.innerHTML = filtered.map(taoTheSanPham).join('');
+            }
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Hàm format tiền tệ VNĐ
+        function formatVND(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        // --- 3. RENDER DỮ LIỆU SẢN PHẨM ---
+        function taoTheSanPham(coffee) {
+            return `
+                <div class="bg-white rounded-2xl shadow-sm border border-coffee-100 overflow-hidden hover:shadow-xl transition-shadow duration-300 group cursor-pointer" onclick="xemChiTiet('${coffee.id}')">
+                    <div class="relative h-56 overflow-hidden img-placeholder">
+                        <img src="${coffee.image}" alt="${coffee.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-5">
+                        <div class="text-xs font-bold text-coffee-400 uppercase tracking-wider mb-1">${coffee.category}</div>
+                        <h3 class="text-xl font-bold text-coffee-900 mb-2">${coffee.name}</h3>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-lg font-bold text-coffee-600">${formatVND(coffee.price)}</span>
+                            <button class="w-10 h-10 rounded-full bg-coffee-100 text-coffee-700 flex items-center justify-center group-hover:bg-coffee-600 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSanPhams() {
+            // Render món nổi bật ở Trang Chủ (view-index)
+            const featuredGrid = document.getElementById('featured-grid');
+            const featuredCoffees = coffees.filter(c => c.featured);
+            featuredGrid.innerHTML = featuredCoffees.map(taoTheSanPham).join('');
+
+            // Render tất cả món ở trang Thực Đơn (view-list)
+            const allCoffeesGrid = document.getElementById('all-coffees-grid');
+            allCoffeesGrid.innerHTML = coffees.map(taoTheSanPham).join('');
+        }
+
+        // --- 4. LOGIC TRANG CHI TIẾT ---
+        function xemChiTiet(coffeeId) {
+            const coffee = coffees.find(c => c.id === coffeeId);
+            if (!coffee) return;
+
+            // Cập nhật DOM của trang chi tiết
+            document.getElementById('detail-img').src = coffee.image;
+            document.getElementById('detail-category').textContent = coffee.category;
+            document.getElementById('detail-title').textContent = coffee.name;
+            document.getElementById('detail-price').textContent = formatVND(coffee.price);
+            document.getElementById('detail-desc').textContent = coffee.desc;
+
+            const ingredientsHTML = coffee.ingredients.map(ing => `<li>${ing}</li>`).join('');
+            document.getElementById('detail-ingredients').innerHTML = ingredientsHTML;
+
+            // Chuyển hướng sang view-detail
+            navigate('detail');
+        }
+
+        // Khởi tạo trang khi tải xong
+        window.onload = () => {
+            renderSanPhams();
+        };
+    </script>
+</body>
+
+</html>
