@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giới Thiệu - 3BichCoffee & TEA</title>
+    <meta name="description" content="Giới thiệu về 3BichCoffee - Quán cà phê rang mộc nguyên chất.">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Quicksand -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        coffee: {
+                            50: '#fdf8f5',
+                            100: '#f8ede7',
+                            200: '#eedbd0',
+                            300: '#e1c1af',
+                            400: '#d0a086',
+                            500: '#c28564',
+                            600: '#b46d4c',
+                            700: '#96553d',
+                            800: '#7c4735',
+                            900: '#643b2d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fdf8f5;
+            color: #4a3f35;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation Header -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="index.html" class="flex-shrink-0 flex items-center no-underline cursor-pointer">
+                    <i class="fa-solid fa-mug-hot text-coffee-600 text-3xl mr-3"></i>
+                    <span class="font-bold text-2xl text-coffee-800 tracking-tight">3BichCoffee</span>
+                </a>
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html"
+                        class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors no-underline">Trang
+                        Chủ
+                    </a>
+                    <a href="index.html#list"
+                        class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors no-underline">Thực
+                        Đơn</a>
+                    <a href="introduce.html"
+                        class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors no-underline">Giới
+                        Thiệu</a>
+                </nav>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()"
+                        class="text-coffee-800 hover:text-coffee-600 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu (hidden by default) -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-white border-t border-coffee-100 pb-4 shadow-lg absolute w-full">
+            <a href="index.html"
+                class="block w-full text-left px-6 py-3 text-coffee-800 hover:bg-coffee-50 font-medium no-underline">Trang
+                Chủ</a>
+            <a href="index.html#list"
+                class="block w-full text-left px-6 py-3 text-coffee-800 hover:bg-coffee-50 font-medium no-underline">Thực
+                Đơn</a>
+            <a href="introduce.html"
+                class="block w-full text-left px-6 py-3 text-coffee-800 hover:bg-coffee-50 font-medium no-underline">Giới
+                Thiệu</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <!-- About Hero -->
+        <section class="py-16 bg-coffee-800 text-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Câu Chuyện Của 3BichCoffee</h1>
+                <p class="text-lg text-coffee-100">Bắt nguồn từ tình yêu với hạt cà phê Việt Nam và mong muốn tạo ra
+                    một không gian bình yên giữa lòng thành phố nhộn nhịp.</p>
+            </div>
+        </section>
+
+        <!-- Content section -->
+        <section class="py-16 bg-white">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-12 items-center">
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80"
+                        alt="Cafe interior" class="rounded-2xl shadow-xl w-full h-auto">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl font-bold text-coffee-900 mb-6">Hơn cả một thức uống</h2>
+                    <p class="text-coffee-700 mb-4 leading-relaxed">Được thành lập vào năm 2020, 3BichCoffee không
+                        chỉ là nơi bạn đến để thưởng thức một ly cà phê ngon, mà còn là trạm dừng chân để tìm lại sự
+                        cân bằng trong cuộc sống.</p>
+                    <p class="text-coffee-700 mb-6 leading-relaxed">Chúng tôi cam kết sử dụng 100% hạt cà phê nội
+                        địa, được rang mộc theo tiêu chuẩn khắt khe nhất để mang lại hương vị nguyên bản, sạch và an
+                        toàn cho sức khỏe.</p>
+
+                    <div class="bg-coffee-50 p-6 rounded-xl border-l-4 border-coffee-500">
+                        <h3 class="font-bold text-coffee-900 mb-2">Triết lý của chúng tôi</h3>
+                        <p class="text-coffee-700 italic">"Mỗi tách cà phê là một tác phẩm nghệ thuật, được pha chế
+                            bằng cả trái tim."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info & Location -->
+        <section class="py-16 bg-coffee-100">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Location -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                        <div
+                            class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <h3 class="font-bold text-xl text-coffee-900 mb-2">Địa Chỉ</h3>
+                        <p class="text-coffee-600">22 Nguyễn Huệ, Phước Dân,<br>Ninh Phước, Ninh Thuận</p>
+                    </div>
+                    <!-- Hours -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                        <div
+                            class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <h3 class="font-bold text-xl text-coffee-900 mb-2">Giờ Mở Cửa</h3>
+                        <p class="text-coffee-600">Thứ 2 - Thứ 6: 07:00 - 22:00<br>Cuối tuần: 08:00 - 23:00</p>
+                    </div>
+                    <!-- Contact -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                        <div
+                            class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <h3 class="font-bold text-xl text-coffee-900 mb-2">Liên Hệ</h3>
+                        <p class="text-coffee-600">Điện thoại / Zalo: <a href="https://id.zalo.me/0399232692" target="_blank"
+                                class="text-coffee-600 hover:text-coffee-800 underline">0399.232.692</a><br>Email:
+                            hello@3bichcoffee.vn</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-coffee-900 text-coffee-200 py-12 border-t border-coffee-800">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            <div>
+                <div class="flex items-center justify-center md:justify-start mb-4">
+                    <i class="fa-solid fa-mug-hot text-2xl mr-2 text-white"></i>
+                    <span class="font-bold text-2xl text-white">3BichCoffee</span>
+                </div>
+                <p class="text-sm">Mang hương vị cà phê nguyên bản đến mọi người. Nơi cảm xúc bắt đầu từ những giọt cà
+                    phê đậm đà.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Đường Dẫn</h4>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="hover:text-white transition-colors no-underline">Trang Chủ</a></li>
+                    <li><a href="index.html#list" class="hover:text-white transition-colors no-underline">Thực Đơn</a>
+                    </li>
+                    <li><a href="introduce.html" class="hover:text-white transition-colors no-underline">Giới Thiệu</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Kết Nối</h4>
+                <div class="flex flex-col items-center md:items-start space-y-3">
+                    <a href="https://www.facebook.com/profile.php?id=100069758060405" target="_blank"
+                        class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
+                        <div class="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center group-hover:bg-blue-600 transition-colors mr-3">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </div>
+                        <span class="font-medium">Facebook</span>
+                    </a>
+                    <a href="https://id.zalo.me/0399232692" target="_blank"
+                        class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
+                        <div class="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center group-hover:bg-blue-500 transition-colors mr-3">
+                            <span class="font-bold text-xs">Z</span>
+                        </div>
+                        <span class="font-medium">Zalo</span>
+                    </a>
+                    <a href="https://www.tiktok.com/@3bich.coffee" target="_blank"
+                        class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
+                        <div class="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center group-hover:bg-black transition-colors mr-3">
+                            <i class="fa-brands fa-tiktok"></i>
+                        </div>
+                        <span class="font-medium">TikTok</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-12 pt-8 border-t border-coffee-800 text-sm">
+            <p>&copy; 2024 3BichCoffee. Đã đăng ký bản quyền.</p>
+        </div>
+    </footer>
+
+    <!-- Shared Common Script -->
+    <script src="common.js"></script>
+</body>
+
+</html>
