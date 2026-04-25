@@ -49,3 +49,33 @@ function closeOrderModal() {
         modal.classList.remove('flex');
     }
 }
+
+// Ngăn chặn xem mã nguồn, chuột phải và F12
+document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+        e.preventDefault();
+        return false;
+    }
+    // Chặn Ctrl+Shift+J (Mở Console)
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+        e.preventDefault();
+        return false;
+    }
+    // Chặn Ctrl+U (Xem Source)
+    if (e.ctrlKey && e.keyCode === 85) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+setInterval(function () {
+    (function () {
+        return false;
+    }
+    ['constructor']('debugger')
+    ['call']());
+}, 100);
