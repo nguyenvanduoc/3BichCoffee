@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3BichCoffee & TEA</title>
+    <title>3BichCoffee & TEA - Sale Cà Phê Giá Tốt | Khuyến Mãi Coffee</title>
+    <meta name="description"
+        content="3BichCoffee - Sale cà phê giá tốt nhất tại Ninh Thuận. Khuyến mãi coffee đặc biệt, cà phê rang mộc nguyên chất, cà phê sữa đá, bạc xỉu, latte, cold brew. Giao hàng nhanh tại Ninh Phước, Ninh Thuận.">
+    <meta name="keywords"
+        content="sale coffee, sale cà phê, khuyến mãi cà phê, giảm giá cà phê, coffee giá rẻ, mua cà phê online, cà phê rang mộc, cà phê nguyên chất, cà phê sữa đá sale, bạc xỉu giảm giá, latte khuyến mãi, cold brew sale, cà phê phin, espresso giá tốt, coffee promotion, coffee discount, 3BichCoffee, mua coffee online, đặt cà phê giao hàng, coffee delivery, cà phê tươi, cà phê đặc sản, cà phê truyền thống Việt Nam, Vietnamese coffee sale, robusta sale, arabica giảm giá, cà phê trứng khuyến mãi, flash sale coffee, big sale cà phê, ưu đãi cà phê, combo cà phê giảm giá, cà phê Ninh Thuận, coffee Ninh Thuận, sale cà phê Ninh Thuận, khuyến mãi cà phê Ninh Phước, cà phê Phước Dân, quán cà phê Ninh Thuận, quán coffee Ninh Phước, cà phê ngon Ninh Thuận, giao cà phê Ninh Thuận, coffee Phan Rang, cà phê Phan Rang Tháp Chàm, sale coffee Ninh Thuận, giảm giá coffee Ninh Phước, đặt cà phê Ninh Thuận, quán cà phê đẹp Ninh Thuận, cà phê giá rẻ Ninh Phước">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Quicksand -->
@@ -95,7 +99,7 @@
                 <nav class="hidden md:flex space-x-8">
                     <button onclick="navigate('index')"
                         class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors">Trang Chủ
-                        test</button>
+                    </button>
                     <button onclick="navigate('list')"
                         class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors">Thực Đơn</button>
                     <button onclick="navigate('info')"
@@ -178,16 +182,22 @@
                     </div>
 
                     <!-- Filter/Categories (Interactive) -->
-                    <div class="flex flex-wrap justify-center gap-4 mb-10">
+                    <div class="flex flex-wrap justify-center gap-3 mb-10">
                         <button onclick="filterCoffees('all', this)"
                             class="filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors">Tất
                             cả</button>
-                        <button onclick="filterCoffees('Cà Phê Truyền Thống', this)"
-                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">Cà
-                            Phê Truyền Thống</button>
-                        <button onclick="filterCoffees('Cà Phê Máy', this)"
-                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">Cà
-                            Phê Máy</button>
+                        <button onclick="filterCoffees('Cà Phê', this)"
+                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">☕
+                            Cà Phê</button>
+                        <button onclick="filterCoffees('Trà & Trái Cây', this)"
+                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">🍵
+                            Trà & Trái Cây</button>
+                        <button onclick="filterCoffees('Cacao & Matcha', this)"
+                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">🍫
+                            Cacao & Matcha</button>
+                        <button onclick="filterCoffees('Soda & Sữa Chua', this)"
+                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">🥤
+                            Soda & Sữa Chua</button>
                     </div>
 
                     <!-- All Coffees Grid -->
@@ -233,10 +243,10 @@
                                 </ul>
                             </div>
 
-                            <button onclick="alert('Tính năng đặt hàng đang được phát triển!')"
-                                class="w-full bg-coffee-800 hover:bg-coffee-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center">
+                            <a href="https://zalo.me/0813576385" target="_blank"
+                                class="w-full bg-coffee-800 hover:bg-coffee-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center no-underline">
                                 <i class="fa-solid fa-cart-plus mr-2"></i> Đặt Mua Ngay
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -290,7 +300,7 @@
                                 <i class="fa-solid fa-location-dot"></i>
                             </div>
                             <h3 class="font-bold text-xl text-coffee-900 mb-2">Địa Chỉ</h3>
-                            <p class="text-coffee-600">123 Đường Sách, Quận 1,<br>TP. Hồ Chí Minh</p>
+                            <p class="text-coffee-600">22 Nguyễn Huệ, Phước Dân,<br>Ninh Phước, Ninh Thuận</p>
                         </div>
                         <!-- Hours -->
                         <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
@@ -308,7 +318,9 @@
                                 <i class="fa-solid fa-phone"></i>
                             </div>
                             <h3 class="font-bold text-xl text-coffee-900 mb-2">Liên Hệ</h3>
-                            <p class="text-coffee-600">Điện thoại: 0123 456 789<br>Email: hello@3bichcoffee.vn</p>
+                            <p class="text-coffee-600">Điện thoại: <a href="https://zalo.me/0813576385" target="_blank"
+                                    class="text-coffee-600 hover:text-coffee-800 underline">081.357.6385</a><br>Email:
+                                hello@3bichcoffee.vn</p>
                         </div>
                     </div>
                 </div>
@@ -361,71 +373,8 @@
     </footer>
 
     <!-- JavaScript for Navigation and Data Rendering -->
+    <script src="data.js"></script>
     <script>
-        // --- 1. DỮ LIỆU SẢN PHẨM (MOCK DATA) ---
-        const coffees = [
-            {
-                id: 'cp-sua-da',
-                name: 'Cà Phê Sữa Đá',
-                price: 29000,
-                category: 'Cà Phê Truyền Thống',
-                desc: 'Thức uống đặc trưng của Việt Nam. Sự kết hợp hoàn hảo giữa cà phê phin đậm đà và sữa đặc ngọt ngào, thêm đá mát lạnh.',
-                ingredients: ['Cà phê Robusta nguyên chất', 'Sữa đặc có đường', 'Đá viên'],
-                image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&w=600&q=80',
-                featured: true
-            },
-            {
-                id: 'bac-xiu',
-                name: 'Bạc Xỉu',
-                price: 35000,
-                category: 'Cà Phê Truyền Thống',
-                desc: 'Phù hợp cho những ai thích vị béo ngọt nhiều hơn vị đắng. "Sữa đá pha thêm chút cà phê" theo phong cách Sài Gòn xưa.',
-                ingredients: ['Sữa tươi', 'Sữa đặc', '1 shot cà phê Espresso/Phin', 'Đá'],
-                image: 'https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=600&q=80',
-                featured: true
-            },
-            {
-                id: 'cp-den',
-                name: 'Cà Phê Đen Đá',
-                price: 25000,
-                category: 'Cà Phê Truyền Thống',
-                desc: 'Nguyên bản và mạnh mẽ. Lựa chọn tuyệt vời để bắt đầu một ngày mới đầy năng lượng với vị đắng đặc trưng.',
-                ingredients: ['Cà phê nguyên chất (Robusta & Arabica)', 'Đường (tùy chọn)', 'Đá viên'],
-                image: 'https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?auto=format&fit=crop&w=600&q=80',
-                featured: false
-            },
-            {
-                id: 'cp-trung',
-                name: 'Cà Phê Trứng',
-                price: 45000,
-                category: 'Đặc Sản',
-                desc: 'Đặc sản của Hà Nội. Lớp kem trứng béo ngậy, vàng ươm nổi bật trên nền cà phê đen nóng hổi, đắng nhẹ.',
-                ingredients: ['Lòng đỏ trứng gà ta', 'Mật ong / Sữa đặc', 'Cà phê phin nóng'],
-                image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80',
-                featured: true
-            },
-            {
-                id: 'latte',
-                name: 'Latte',
-                price: 49000,
-                category: 'Cà Phê Máy',
-                desc: 'Nghệ thuật pha chế Ý. Sự hòa quyện mượt mà giữa một shot Espresso đậm đặc và lớp sữa nóng đánh bọt mịn màng.',
-                ingredients: ['Espresso', 'Sữa tươi thanh trùng', 'Lớp bọt sữa mỏng'],
-                image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
-                featured: false
-            },
-            {
-                id: 'cold-brew',
-                name: 'Cold Brew Cam Sả',
-                price: 55000,
-                category: 'Cà Phê Máy / Ủ Lạnh',
-                desc: 'Cà phê ủ lạnh thanh mát, kết hợp cùng hương vị cam vàng và sả tươi, tạo nên thức uống giải khát tuyệt vời.',
-                ingredients: ['Cà phê Arabica ủ lạnh 18 tiếng', 'Cam vàng', 'Sả tươi', 'Đường nước'],
-                image: 'https://images.unsplash.com/photo-1461023058943-0708e52e5058?auto=format&fit=crop&w=600&q=80',
-                featured: false
-            }
-        ];
-
         // --- 2. LOGIC ĐIỀU HƯỚNG VÀ FILTER ---
         function navigate(viewId, addToHistory = true) {
             // Ẩn tất cả các view
@@ -564,6 +513,44 @@
                 history.replaceState({ view: initialView }, '', '#' + initialView);
             }
         };
+    </script>
+    <!-- Code injected by live-server -->
+    <script>
+        // <![CDATA[  <-- For SVG support
+        if ('WebSocket' in window) {
+            (function () {
+                function refreshCSS() {
+                    var sheets = [].slice.call(document.getElementsByTagName("link"));
+                    var head = document.getElementsByTagName("head")[0];
+                    for (var i = 0; i < sheets.length; ++i) {
+                        var elem = sheets[i];
+                        var parent = elem.parentElement || head;
+                        parent.removeChild(elem);
+                        var rel = elem.rel;
+                        if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+                            var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+                            elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+                        }
+                        parent.appendChild(elem);
+                    }
+                }
+                var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+                var address = protocol + window.location.host + window.location.pathname + '/ws';
+                var socket = new WebSocket(address);
+                socket.onmessage = function (msg) {
+                    if (msg.data == 'reload') window.location.reload();
+                    else if (msg.data == 'refreshcss') refreshCSS();
+                };
+                if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+                    console.log('Live reload enabled.');
+                    sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+                }
+            })();
+        }
+        else {
+            console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+        }
+        // ]]>
     </script>
 </body>
 
