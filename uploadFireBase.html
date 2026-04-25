@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Đẩy Dữ Liệu - 3BichCoffee</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+
+        button {
+            background-color: #f59e0b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #d97706;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+
+        #status {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>3BichCoffee Tool</h2>
+        <p>Nhấn nút dưới đây để đẩy toàn bộ danh mục món ăn lên Firestore.</p>
+        <button id="btnUpload">Bắt đầu đẩy dữ liệu</button>
+        <div id="status"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjCvkQJuC3N1flSB_4M0-_GP7ltVTH0Ko",
+            authDomain: "bichcoffee-c0ef8.firebaseapp.com",
+            projectId: "bichcoffee-c0ef8",
+            storageBucket: "bichcoffee-c0ef8.firebasestorage.app",
+            messagingSenderId: "1096220661361",
+            appId: "1:1096220661361:web:d36215b271d48f6a66add0",
+            measurementId: "G-GDMMHWJV24"
+        };
+
+        // Khởi tạo Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Dữ liệu món ăn
+        // const products = [
+        //     { id: 'ca-phe-den', name: 'Cà Phê Đen', price: 12000, categoryId: 1, category: 'Cà Phê', desc: 'Cà phê đen nguyên chất...', ingredients: ['Cà phê Robusta rang mộc', 'Đá viên'], image: 'https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?auto=format&fit=crop&w=600&q=80', featured: true },
+        //     { id: 'ca-phe-sua', name: 'Cà Phê Sữa', price: 15000, categoryId: 1, category: 'Cà Phê', desc: 'Sự kết hợp hoàn hảo...', ingredients: ['Cà phê Robusta', 'Sữa đặc', 'Đá viên'], image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&w=600&q=80', featured: true },
+        //     { id: 'bac-xiu', name: 'Bạc Xỉu', price: 20000, categoryId: 1, category: 'Cà Phê', desc: 'Sữa đá pha thêm chút cà phê...', ingredients: ['Sữa tươi', 'Sữa đặc', 'Cà phê'], image: 'https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=600&q=80', featured: true },
+        //     { id: 'ca-phe-kem-muoi', name: 'Cà Phê Kem Muối', price: 25000, categoryId: 1, category: 'Cà Phê', desc: 'Vị mặn nhẹ của kem...', ingredients: ['Cà phê', 'Kem whipping', 'Muối biển'], image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', featured: true },
+        //     { id: 'tra-dao-dam', name: 'Trà Đào Dầm', price: 20000, categoryId: 2, category: 'Trà & Trái Cây', desc: 'Vị ngọt thanh, thơm hương đào...', ingredients: ['Trà đen', 'Đào ngâm'], image: 'https://images.unsplash.com/photo-1558857563-b371033873b8?auto=format&fit=crop&w=600&q=80', featured: true },
+        //     { id: 'matcha-sua-dua', name: 'Matcha Sữa Dừa', price: 28000, categoryId: 3, category: 'Cacao & Matcha', desc: 'Hương vị thanh mát...', ingredients: ['Bột matcha', 'Nước cốt dừa'], image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80', featured: true }
+        //     // Bạn có thể thêm các món khác vào đây tương tự
+        // ];
+        const tableName = "users";
+        const users = [
+            // ========== 1. NHÓM CÀ PHÊ (COFFEE) ==========
+            {
+                id: '1',
+                name: 'vanduoc',
+                password: '123123',
+                idSystem: 1,
+            },
+            {
+                id: '2',
+                name: 'ngocbich',
+                password: '123123',
+                idSystem: 1,
+            }
+        ];
+
+
+        const btn = document.getElementById('btnUpload');
+        const statusDiv = document.getElementById('status');
+
+        btn.addEventListener('click', async () => {
+            btn.disabled = true;
+            statusDiv.innerHTML = "Đang bắt đầu...";
+
+            for (const item of users) {
+                try {
+                    await setDoc(doc(db, tableName, item.id), item);
+                    statusDiv.innerHTML += `<p class="success">✅ Đã đẩy: ${item.name}</p>`;
+                    statusDiv.scrollTop = statusDiv.scrollHeight;
+                } catch (e) {
+                    statusDiv.innerHTML += `<p class="error">❌ Lỗi món ${item.name}: ${e.message}</p>`;
+                }
+            }
+            statusDiv.innerHTML += "<h3>Hoàn thành!</h3>";
+            btn.disabled = false;
+        });
+    </script>
+
+</body>
+
+</html>

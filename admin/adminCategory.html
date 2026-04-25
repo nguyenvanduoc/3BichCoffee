@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.replace("login.html"); // Đá về trang đăng nhập
+        }
+    </script>
+    <title>Quản lý Danh Mục - 3BichCoffee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            /* Đổi màu xanh cho khác biệt với trang Món (Cam) */
+            border-radius: 10px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Điều hướng Admin -->
+        <div class="mb-4 flex gap-2">
+            <a href="adminProduct.html"
+                class="px-4 py-2 bg-white text-gray-600 font-bold rounded-lg shadow-sm hover:bg-gray-50 border border-gray-200 transition text-sm flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+                Quay lại Quản lý Món
+            </a>
+            <div
+                class="px-4 py-2 bg-blue-50 text-blue-700 font-bold rounded-lg shadow-sm border border-blue-200 text-sm flex items-center gap-2 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                Đang ở: Quản lý Danh mục
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div
+            class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-500 p-3 rounded-lg text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Cấu hình Danh mục</h1>
+                    <p class="text-gray-500 text-sm">Thêm, sửa, xóa các nhóm đồ uống (Category)</p>
+                </div>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-2">
+                <button onclick="openFormModal()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md transition font-semibold flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Thêm danh mục
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusBox" class="hidden mb-6 p-4 rounded-xl text-center font-medium shadow-sm border animate-pulse">
+        </div>
+
+        <!-- Table View -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider w-24 text-center">
+                                Thứ tự</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Mã (ID)</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Tên hiển thị</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider text-center w-32">
+                                Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody" class="divide-y divide-gray-50">
+                        <tr>
+                            <td colspan="4" class="p-10 text-center text-gray-400 italic">Đang tải dữ liệu danh mục...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form (Thêm/Sửa) -->
+    <div id="categoryModal"
+        class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div
+            class="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl scale-up animate-in fade-in duration-300">
+            <div class="bg-blue-500 p-5 text-white flex justify-between items-center">
+                <h3 id="modalTitle" class="text-xl font-bold">Thêm danh mục mới</h3>
+                <button onclick="closeFormModal()"
+                    class="text-3xl font-light hover:rotate-90 transition-transform">&times;</button>
+            </div>
+            <form id="categoryForm" class="p-8 space-y-5">
+                <input type="hidden" id="editMode" value="false">
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">ID Danh mục (Viết liền, không
+                        dấu)</label>
+                    <input type="text" id="cId" required placeholder="vd: tra-sua"
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-400 outline-none transition-all">
+                    <p class="text-[10px] text-gray-400 mt-1">*Không thể thay đổi ID sau khi tạo.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tên hiển thị</label>
+                    <input type="text" id="cName" required placeholder="vd: Trà Sữa"
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-400 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Thứ tự hiển thị (Số nhỏ xếp
+                        trước)</label>
+                    <input type="number" id="cOrder" required value="1" min="1"
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-400 outline-none transition-all">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="closeFormModal()"
+                        class="px-6 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition">Đóng</button>
+                    <button type="submit"
+                        class="px-8 py-3 bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-600 transition-all transform active:scale-95">Lưu
+                        danh mục</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div id="confirmModal"
+        class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-[60] backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-8 text-center shadow-2xl">
+            <div class="w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Xác nhận xóa?</h3>
+            <p id="confirmText" class="text-gray-500 mb-8">Bạn có chắc muốn xóa danh mục này? Việc này không thể hoàn
+                tác.</p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()"
+                    class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition">Hủy</button>
+                <button id="btnConfirmDelete"
+                    class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-600 transition">Xóa
+                    ngay</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Cùng chung cấu hình với file admin.html
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjCvkQJuC3N1flSB_4M0-_GP7ltVTH0Ko",
+            authDomain: "bichcoffee-c0ef8.firebaseapp.com",
+            projectId: "bichcoffee-c0ef8",
+            storageBucket: "bichcoffee-c0ef8.firebasestorage.app",
+            messagingSenderId: "1096220661361",
+            appId: "1:1096220661361:web:d36215b271d48f6a66add0",
+            measurementId: "G-GDMMHWJV24"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const categoriesCol = collection(db, "categories");
+
+        let allCategories = [];
+        let currentDeleteId = null;
+
+        // --- 1. THEO DÕI REALTIME DANH MỤC ---
+        onSnapshot(categoriesCol, (snapshot) => {
+            allCategories = [];
+            snapshot.forEach(doc => allCategories.push({ id: doc.id, ...doc.data() }));
+
+            // Sắp xếp theo order tăng dần
+            allCategories.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            renderTable();
+        }, (error) => showStatus("Lỗi Firestore: " + error.message, "bg-red-500 text-white"));
+
+        // --- 2. HIỂN THỊ LÊN BẢNG ---
+        function renderTable() {
+            const tbody = document.getElementById('categoryTableBody');
+            tbody.innerHTML = "";
+
+            if (allCategories.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-gray-400">Chưa có danh mục nào. Hãy nhấn "Thêm danh mục"</td></tr>`;
+                return;
+            }
+
+            allCategories.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = "fade-in hover:bg-blue-50/30 transition-all";
+                row.innerHTML = `
+                    <td class="p-5 text-center">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold border border-gray-200">
+                            ${item.order || 0}
+                        </span>
+                    </td>
+                    <td class="p-5">
+                        <div class="font-mono text-sm text-gray-500 bg-gray-50 px-2 py-1 rounded inline-block border border-gray-200">${item.id}</div>
+                    </td>
+                    <td class="p-5">
+                        <div class="font-bold text-gray-800 text-lg">${item.name}</div>
+                    </td>
+                    <td class="p-5">
+                        <div class="flex justify-center gap-2">
+                            <button onclick="editCategory('${item.id}')" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all shadow-sm" title="Sửa">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                            </button>
+                            <button onclick="requestDelete('${item.id}', '${item.name}')" class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all shadow-sm" title="Xóa">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // --- 3. FORM XỬ LÝ (CRUD) ---
+        const categoryForm = document.getElementById('categoryForm');
+        categoryForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('cId').value.trim();
+            const data = {
+                name: document.getElementById('cName').value.trim(),
+                order: Number(document.getElementById('cOrder').value)
+            };
+
+            try {
+                showStatus("Đang lưu...", "bg-blue-500 text-white");
+                // Dùng setDoc với merge: true để tạo mới hoặc cập nhật
+                await setDoc(doc(db, "categories", id), data, { merge: true });
+                showStatus("Lưu danh mục thành công!", "bg-green-500 text-white");
+                closeFormModal();
+            } catch (err) {
+                showStatus("Lỗi: " + err.message, "bg-red-500 text-white");
+            }
+        };
+
+        // --- 4. HÀM GÁN TOÀN CỤC CHO HTML BUTTONS ---
+        window.editCategory = async (id) => {
+            const snap = await getDoc(doc(db, "categories", id));
+            if (snap.exists()) {
+                const data = snap.data();
+                document.getElementById('cId').value = id;
+                document.getElementById('cId').disabled = true; // Không cho sửa ID
+                document.getElementById('cName').value = data.name;
+                document.getElementById('cOrder').value = data.order || 1;
+
+                document.getElementById('editMode').value = "true";
+                document.getElementById('modalTitle').innerText = "Sửa danh mục";
+                openFormModal();
+            }
+        };
+
+        window.requestDelete = (id, name) => {
+            currentDeleteId = id;
+            document.getElementById('confirmText').innerText = `Xóa danh mục "${name}"? Các món ăn thuộc danh mục này vẫn sẽ tồn tại nhưng mất liên kết danh mục.`;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        };
+
+        document.getElementById('btnConfirmDelete').onclick = async () => {
+            try {
+                await deleteDoc(doc(db, "categories", currentDeleteId));
+                showStatus("Đã xóa danh mục!", "bg-blue-500 text-white");
+                closeConfirmModal();
+            } catch (err) {
+                showStatus("Lỗi xóa: " + err.message, "bg-red-500 text-white");
+            }
+        };
+
+        // --- 5. ĐIỀU KHIỂN GIAO DIỆN MODAL ---
+        window.openFormModal = () => document.getElementById('categoryModal').classList.remove('hidden');
+
+        window.closeFormModal = () => {
+            document.getElementById('categoryModal').classList.add('hidden');
+            categoryForm.reset();
+            document.getElementById('cId').disabled = false;
+            document.getElementById('editMode').value = "false";
+            document.getElementById('modalTitle').innerText = "Thêm danh mục mới";
+
+            // Đề xuất số thứ tự tiếp theo
+            const nextOrder = allCategories.length > 0 ? Math.max(...allCategories.map(c => c.order || 0)) + 1 : 1;
+            document.getElementById('cOrder').value = nextOrder;
+        };
+
+        window.closeConfirmModal = () => document.getElementById('confirmModal').classList.add('hidden');
+
+        function showStatus(text, classes) {
+            const box = document.getElementById('statusBox');
+            box.innerText = text;
+            box.className = `mb-6 p-4 rounded-xl text-center font-bold shadow-sm border ${classes}`;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 3000);
+        }
+    </script>
+</body>
+
+</html>

@@ -7,8 +7,6 @@
     <title>3BichCoffee & TEA - Sale Cà Phê Giá Tốt | Khuyến Mãi Coffee</title>
     <meta name="description"
         content="3BichCoffee - Sale cà phê giá tốt nhất tại Ninh Thuận. Khuyến mãi coffee đặc biệt, cà phê rang mộc nguyên chất, cà phê sữa đá, bạc xỉu, latte, cold brew. Giao hàng nhanh tại Ninh Phước, Ninh Thuận.">
-    <meta name="keywords"
-        content="sale coffee, sale cà phê, khuyến mãi cà phê, giảm giá cà phê, coffee giá rẻ, mua cà phê online, cà phê rang mộc, cà phê nguyên chất, cà phê sữa đá sale, bạc xỉu giảm giá, latte khuyến mãi, cold brew sale, cà phê phin, espresso giá tốt, coffee promotion, coffee discount, 3BichCoffee, mua coffee online, đặt cà phê giao hàng, coffee delivery, cà phê tươi, cà phê đặc sản, cà phê truyền thống Việt Nam, Vietnamese coffee sale, robusta sale, arabica giảm giá, cà phê trứng khuyến mãi, flash sale coffee, big sale cà phê, ưu đãi cà phê, combo cà phê giảm giá, cà phê Ninh Thuận, coffee Ninh Thuận, sale cà phê Ninh Thuận, khuyến mãi cà phê Ninh Phước, cà phê Phước Dân, quán cà phê Ninh Thuận, quán coffee Ninh Phước, cà phê ngon Ninh Thuận, giao cà phê Ninh Thuận, coffee Phan Rang, cà phê Phan Rang Tháp Chàm, sale coffee Ninh Thuận, giảm giá coffee Ninh Phước, đặt cà phê Ninh Thuận, quán cà phê đẹp Ninh Thuận, cà phê giá rẻ Ninh Phước">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Quicksand -->
@@ -20,21 +18,12 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Quicksand', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Quicksand', 'sans-serif'], },
                     colors: {
                         coffee: {
-                            50: '#fdf8f5',
-                            100: '#f8ede7',
-                            200: '#eedbd0',
-                            300: '#e1c1af',
-                            400: '#d0a086',
-                            500: '#c28564',
-                            600: '#b46d4c',
-                            700: '#96553d',
-                            800: '#7c4735',
-                            900: '#643b2d',
+                            50: '#fdf8f5', 100: '#f8ede7', 200: '#eedbd0',
+                            300: '#e1c1af', 400: '#d0a086', 500: '#c28564',
+                            600: '#b46d4c', 700: '#96553d', 800: '#7c4735', 900: '#643b2d',
                         }
                     }
                 }
@@ -69,12 +58,10 @@
             }
         }
 
-        /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
         }
 
-        /* Image fallback background */
         .img-placeholder {
             background-color: #eedbd0;
             display: flex;
@@ -98,8 +85,7 @@
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-8">
                     <button onclick="navigate('index')"
-                        class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors">Trang Chủ
-                    </button>
+                        class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors">Trang Chủ</button>
                     <button onclick="navigate('list')"
                         class="text-coffee-800 hover:text-coffee-600 font-semibold transition-colors">Thực Đơn</button>
                     <a href="introduce.html"
@@ -115,7 +101,7 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu (hidden by default) -->
+        <!-- Mobile Menu -->
         <div id="mobile-menu"
             class="hidden md:hidden bg-white border-t border-coffee-100 pb-4 shadow-lg absolute w-full">
             <button onclick="navigate('index'); toggleMobileMenu()"
@@ -135,7 +121,6 @@
 
         <!-- 1. VIEW: INDEX (Trang Chủ) -->
         <div id="view-index" class="page-view active">
-            <!-- Hero Section -->
             <section class="relative bg-coffee-900 text-white overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1600&q=80"
                     alt="Coffee background" class="absolute inset-0 w-full h-full object-cover opacity-40">
@@ -146,9 +131,8 @@
                     <p class="text-lg md:text-xl text-coffee-100 max-w-2xl mb-10">Từng hạt cà phê được chọn lọc kỹ
                         lưỡng, rang mộc hoàn toàn để giữ lại trọn vẹn sự tinh túy của tự nhiên.</p>
                     <button onclick="navigate('list')"
-                        class="bg-coffee-600 hover:bg-coffee-500 text-white px-8 py-3 rounded-full text-lg font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                        Khám Phá Thực Đơn
-                    </button>
+                        class="bg-coffee-600 hover:bg-coffee-500 text-white px-8 py-3 rounded-full text-lg font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">Khám
+                        Phá Thực Đơn</button>
                 </div>
             </section>
 
@@ -160,7 +144,7 @@
                         <div class="h-1 w-20 bg-coffee-500 mx-auto rounded"></div>
                     </div>
                     <div id="featured-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <!-- Featured items will be injected here by JS -->
+                        <p class="col-span-full text-center text-coffee-400 italic">Đang tải món nổi bật...</p>
                     </div>
                     <div class="text-center mt-12">
                         <button onclick="navigate('list')"
@@ -181,28 +165,15 @@
                             những cốc latte nghệ thuật, chúng tôi có mọi thứ để thỏa mãn niềm đam mê cà phê của bạn.</p>
                     </div>
 
-                    <!-- Filter/Categories (Interactive) -->
-                    <div class="flex flex-wrap justify-center gap-3 mb-10">
-                        <button onclick="filterCoffees(0, this)"
-                            class="filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors">Tất
-                            cả</button>
-                        <button onclick="filterCoffees(1, this)"
-                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">☕
-                            Cà Phê</button>
-                        <button onclick="filterCoffees(2, this)"
-                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">🍵
-                            Trà & Trái Cây</button>
-                        <button onclick="filterCoffees(3, this)"
-                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">🍫
-                            Cacao & Matcha</button>
-                        <button onclick="filterCoffees(4, this)"
-                            class="filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors">🥤
-                            Soda & Sữa Chua</button>
+                    <!-- Filter/Categories (Dynamic from Firebase) -->
+                    <div id="category-filters" class="flex flex-wrap justify-center gap-3 mb-10">
+                        <div class="text-coffee-400 text-sm animate-pulse">Đang tải danh mục...</div>
                     </div>
 
                     <!-- All Coffees Grid -->
                     <div id="all-coffees-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <!-- All items will be injected here by JS -->
+                        <p class="col-span-full text-center text-coffee-400 italic animate-pulse">Đang tải thực đơn từ
+                            Cloud...</p>
                     </div>
                 </div>
             </section>
@@ -218,28 +189,21 @@
                     </button>
 
                     <div class="bg-coffee-50 rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row">
-                        <!-- Product Image -->
                         <div class="md:w-1/2 relative h-80 md:h-auto img-placeholder">
                             <img id="detail-img" src="" alt="Coffee Image"
                                 class="absolute inset-0 w-full h-full object-cover">
                         </div>
-
-                        <!-- Product Info -->
                         <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
                             <div class="uppercase tracking-wide text-sm text-coffee-500 font-bold mb-2"
                                 id="detail-category">Cà Phê</div>
-                            <h2 id="detail-title" class="text-3xl md:text-4xl font-bold text-coffee-900 mb-4">Tên Sản
-                                Phẩm</h2>
+                            <h2 id="detail-title" class="text-3xl md:text-4xl font-bold text-coffee-900 mb-4">Đang
+                                tải...</h2>
                             <p id="detail-price" class="text-2xl font-bold text-coffee-600 mb-6">0đ</p>
-
-                            <p id="detail-desc" class="text-coffee-700 mb-8 leading-relaxed">
-                                Mô tả chi tiết sản phẩm sẽ hiện ở đây.
-                            </p>
+                            <p id="detail-desc" class="text-coffee-700 mb-8 leading-relaxed"></p>
 
                             <div class="mb-8">
                                 <h3 class="font-bold text-coffee-900 mb-3">Thành phần:</h3>
                                 <ul id="detail-ingredients" class="list-disc list-inside text-coffee-700 space-y-1">
-                                    <!-- Ingredients go here -->
                                 </ul>
                             </div>
 
@@ -253,8 +217,6 @@
             </section>
         </div>
 
-
-
     </main>
 
     <!-- Footer -->
@@ -267,10 +229,8 @@
                     <span class="font-bold text-2xl text-white">3BichCoffee</span>
                 </div>
                 <p class="text-sm">Bắt nguồn từ tình yêu với hạt cà phê Việt Nam và mong muốn gói ghém trọn vẹn sự thanh
-                    bình, thảnh thơi của một buổi sáng vùng quê vào từng tách cà phê ấm nóng.
-                    </br>
-                    Liên hệ : 0399.232.692 Zalo / Phone.
-                </p>
+                    bình, thảnh thơi của một buổi sáng vùng quê vào từng tách cà phê ấm nóng.<br />Liên hệ :
+                    0399.232.692 Zalo / Phone.</p>
             </div>
             <div>
                 <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Đường Dẫn</h4>
@@ -279,8 +239,8 @@
                             Chủ</button></li>
                     <li><button onclick="navigate('list')" class="hover:text-white transition-colors">Thực Đơn</button>
                     </li>
-                    <li><a href="introduce.html" class="hover:text-white transition-colors no-underline">Giới
-                            Thiệu</a></li>
+                    <li><a href="introduce.html" class="hover:text-white transition-colors no-underline">Giới Thiệu</a>
+                    </li>
                 </ul>
             </div>
             <div>
@@ -290,32 +250,26 @@
                         class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
                         <div
                             class="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center group-hover:bg-blue-600 transition-colors mr-3">
-                            <i class="fa-brands fa-facebook-f"></i>
-                        </div>
+                            <i class="fa-brands fa-facebook-f"></i></div>
                         <span class="font-medium">Facebook</span>
                     </a>
                     <a href="https://id.zalo.me/0399232692" target="_blank"
                         class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
                         <div
                             class="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center group-hover:bg-blue-500 transition-colors mr-3">
-                            <span class="font-bold text-xs">Z</span>
-                        </div>
+                            <span class="font-bold text-xs">Z</span></div>
                         <span class="font-medium">Zalo</span>
                     </a>
                     <a href="https://www.tiktok.com/@3bich.coffee" target="_blank"
                         class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
                         <div
                             class="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center group-hover:bg-black transition-colors mr-3">
-                            <i class="fa-brands fa-tiktok"></i>
-                        </div>
+                            <i class="fa-brands fa-tiktok"></i></div>
                         <span class="font-medium">TikTok</span>
                     </a>
                 </div>
             </div>
         </div>
-        <!-- <div class="text-center mt-12 pt-8 border-t border-coffee-800 text-sm">
-            <p>&copy; 2024 3BichCoffee. Đã đăng ký bản quyền.</p>
-        </div> -->
     </footer>
 
     <!-- Order Modal -->
@@ -323,9 +277,8 @@
         <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-sm w-full mx-4 transform transition-all scale-100">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold text-coffee-900">Liên hệ đặt hàng</h3>
-                <button onclick="closeOrderModal()" class="text-coffee-400 hover:text-coffee-600 focus:outline-none">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
-                </button>
+                <button onclick="closeOrderModal()" class="text-coffee-400 hover:text-coffee-600 focus:outline-none"><i
+                        class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
             <p class="text-coffee-600 mb-6 text-center">Bạn muốn liên hệ qua hình thức nào?</p>
             <div class="flex flex-col space-y-4">
@@ -341,154 +294,185 @@
         </div>
     </div>
 
-    <!-- JavaScript for Navigation and Data Rendering -->
-    <script src="common.js"></script>
-    <script src="data.js"></script>
-    <script>
-        // --- 2. LOGIC ĐIỀU HƯỚNG VÀ FILTER ---
-        function navigate(viewId, addToHistory = true) {
-            // Ẩn tất cả các view
-            const views = document.querySelectorAll('.page-view');
-            views.forEach(view => {
-                view.classList.remove('active');
-            });
+    <!-- JS Tích hợp Firebase (Ghi đè hoàn toàn data.js tĩnh) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-            // Hiển thị view được chọn
-            const activeView = document.getElementById(`view-${viewId}`);
-            if (activeView) {
-                activeView.classList.add('active');
-            } else {
-                document.getElementById('view-index').classList.add('active');
-                viewId = 'index';
-            }
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjCvkQJuC3N1flSB_4M0-_GP7ltVTH0Ko",
+            authDomain: "bichcoffee-c0ef8.firebaseapp.com",
+            projectId: "bichcoffee-c0ef8",
+            storageBucket: "bichcoffee-c0ef8.firebasestorage.app",
+            messagingSenderId: "1096220661361",
+            appId: "1:1096220661361:web:d36215b271d48f6a66add0",
+            measurementId: "G-GDMMHWJV24"
+        };
 
-            // Cập nhật lịch sử trình duyệt để nút Back trên điện thoại hoạt động
-            if (addToHistory) {
-                history.pushState({ view: viewId }, '', '#' + viewId);
-            }
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-            // Cuộn lên đầu trang
-            window.scrollTo(0, 0);
-        }
+        // State lưu trữ dữ liệu tải từ Firebase
+        window.coffeesData = [];
+        window.categoriesData = [];
+        let currentFilterCategory = "Tất cả";
 
-        // Lắng nghe sự kiện bấm nút Back/Forward trên trình duyệt và thiết bị di động
-        window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.view) {
-                navigate(event.state.view, false);
-            } else {
-                const hash = window.location.hash.replace('#', '') || 'index';
-                // Nếu back về nhầm một trang detail trống (do mất state data), tự động đẩy về list
-                if (hash === 'detail') {
-                    navigate('list', false);
-                } else {
-                    navigate(hash, false);
-                }
-            }
+        // 1. TẢI DANH MỤC TỪ FIREBASE
+        onSnapshot(collection(db, "categories"), (snapshot) => {
+            window.categoriesData = [];
+            snapshot.forEach(doc => window.categoriesData.push({ id: doc.id, ...doc.data() }));
+            window.categoriesData.sort((a, b) => (a.order || 0) - (b.order || 0));
+            renderFilters();
         });
 
-        // Lọc đồ uống
-        function filterCoffees(categoryId, btnElement) {
-            // Cập nhật lại UI cho các nút bấm (đổi màu nút đang được chọn)
-            const buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(btn => {
-                btn.className = 'filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors';
-            });
-            btnElement.className = 'filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors';
+        // 2. TẢI SẢN PHẨM TỪ FIREBASE
+        onSnapshot(collection(db, "products"), (snapshot) => {
+            window.coffeesData = [];
+            snapshot.forEach(doc => window.coffeesData.push({ id: doc.id, ...doc.data() }));
+            renderSanPhams();
+        });
 
-            // Xử lý lọc dữ liệu và render lại
+        // Hàm Format Tiền
+        window.formatVND = function (amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        };
+
+        // Hàm tạo HTML thẻ sản phẩm
+        window.taoTheSanPham = function (coffee) {
+            const badge = coffee.featured ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Nổi Bật</div>` : '';
+            return `
+                <div class="bg-white rounded-2xl shadow-sm border border-coffee-100 overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer" onclick="xemChiTiet('${coffee.id}')">
+                    <div class="relative h-56 overflow-hidden img-placeholder">
+                        <img src="${coffee.image}" alt="${coffee.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400?text=3BichCoffee'">
+                        ${badge}
+                    </div>
+                    <div class="p-5 flex flex-col h-[calc(100%-14rem)]">
+                        <div class="text-xs font-bold text-coffee-400 uppercase tracking-wider mb-1">${coffee.category}</div>
+                        <h3 class="text-xl font-bold text-coffee-900 mb-2 line-clamp-2">${coffee.name}</h3>
+                        <div class="mt-auto flex justify-between items-center pt-4">
+                            <span class="text-lg font-black text-coffee-600">${window.formatVND(coffee.price)}</span>
+                            <button class="w-10 h-10 rounded-full bg-coffee-100 text-coffee-700 flex items-center justify-center group-hover:bg-coffee-600 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Render thanh lọc Menu
+        window.renderFilters = function () {
+            const filterContainer = document.getElementById('category-filters');
+            if (!filterContainer) return;
+
+            const isAllActive = currentFilterCategory === "Tất cả";
+            let html = `<button onclick="filterCoffees('Tất cả', this)" class="filter-btn px-6 py-2 ${isAllActive ? 'bg-coffee-600 text-white' : 'bg-white text-coffee-700 hover:bg-coffee-100'} rounded-full font-medium shadow-sm transition-colors">Tất cả</button>`;
+
+            window.categoriesData.forEach(cat => {
+                const isActive = currentFilterCategory === cat.name;
+                const btnClass = isActive
+                    ? "filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors"
+                    : "filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors";
+
+                html += `<button onclick="filterCoffees('${cat.name}', this)" class="${btnClass}">${cat.name}</button>`;
+            });
+
+            filterContainer.innerHTML = html;
+        };
+
+        // Hành động Click Lọc Menu
+        window.filterCoffees = function (categoryName, btnElement) {
+            currentFilterCategory = categoryName;
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.className = 'filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors');
+            if (btnElement) btnElement.className = 'filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors';
+
+            renderListOnly();
+        };
+
+        // Render lại toàn bộ sản phẩm
+        window.renderSanPhams = function () {
+            const featuredGrid = document.getElementById('featured-grid');
+            if (featuredGrid && window.coffeesData.length > 0) {
+                const featuredCoffees = window.coffeesData.filter(c => c.featured);
+                featuredGrid.innerHTML = featuredCoffees.length > 0
+                    ? featuredCoffees.map(window.taoTheSanPham).join('')
+                    : `<p class="col-span-full text-center text-coffee-500 italic">Hiện chưa có món nổi bật nào.</p>`;
+            }
+            renderListOnly();
+        };
+
+        // Render theo danh mục đang chọn
+        function renderListOnly() {
             const allCoffeesGrid = document.getElementById('all-coffees-grid');
-            if (categoryId === 0) {
-                allCoffeesGrid.innerHTML = coffees.map(taoTheSanPham).join('');
+            if (!allCoffeesGrid) return;
+
+            if (window.coffeesData.length === 0) {
+                allCoffeesGrid.innerHTML = `<p class="col-span-full text-center text-coffee-400 italic">Chưa có sản phẩm nào trên hệ thống.</p>`;
+                return;
+            }
+
+            if (currentFilterCategory === "Tất cả") {
+                allCoffeesGrid.innerHTML = window.coffeesData.map(window.taoTheSanPham).join('');
             } else {
-                const filtered = coffees.filter(c => c.categoryId === categoryId);
-                allCoffeesGrid.innerHTML = filtered.map(taoTheSanPham).join('');
+                const filtered = window.coffeesData.filter(c => c.category === currentFilterCategory);
+                allCoffeesGrid.innerHTML = filtered.length > 0
+                    ? filtered.map(window.taoTheSanPham).join('')
+                    : `<p class="col-span-full text-center text-coffee-400 italic">Không có món nào trong nhóm này.</p>`;
             }
         }
 
-        function renderSanPhams() {
-            // Render món nổi bật ở Trang Chủ (view-index)
-            const featuredGrid = document.getElementById('featured-grid');
-            const featuredCoffees = coffees.filter(c => c.featured);
-            featuredGrid.innerHTML = featuredCoffees.map(taoTheSanPham).join('');
-
-            // Render tất cả món ở trang Thực Đơn (view-list)
-            const allCoffeesGrid = document.getElementById('all-coffees-grid');
-            allCoffeesGrid.innerHTML = coffees.map(taoTheSanPham).join('');
-        }
-
-        // --- 4. LOGIC TRANG CHI TIẾT ---
-        function xemChiTiet(coffeeId) {
-            const coffee = coffees.find(c => c.id === coffeeId);
+        // Xem chi tiết
+        window.xemChiTiet = function (coffeeId) {
+            const coffee = window.coffeesData.find(c => c.id === coffeeId);
             if (!coffee) return;
 
-            // Cập nhật DOM của trang chi tiết
             document.getElementById('detail-img').src = coffee.image;
             document.getElementById('detail-category').textContent = coffee.category;
             document.getElementById('detail-title').textContent = coffee.name;
-            document.getElementById('detail-price').textContent = formatVND(coffee.price);
-            document.getElementById('detail-desc').textContent = coffee.desc;
+            document.getElementById('detail-price').textContent = window.formatVND(coffee.price);
+            document.getElementById('detail-desc').textContent = coffee.desc || "Hương vị hấp dẫn, đánh thức mọi giác quan.";
 
-            const ingredientsHTML = coffee.ingredients.map(ing => `<li>${ing}</li>`).join('');
-            document.getElementById('detail-ingredients').innerHTML = ingredientsHTML;
+            // Kiểm tra nếu có mảng ingredients thì render, không thì báo trống
+            const ingredients = coffee.ingredients || [];
+            document.getElementById('detail-ingredients').innerHTML = ingredients.length > 0
+                ? ingredients.map(ing => `<li>${ing}</li>`).join('')
+                : "<li class='italic text-gray-400'>Đang cập nhật thành phần...</li>";
 
-            // Chuyển hướng sang view-detail
-            navigate('detail');
-        }
-
-        // Khởi tạo trang khi tải xong
-        window.onload = () => {
-            renderSanPhams();
-
-            // Khởi tạo trạng thái lịch sử ban đầu để tương thích nút Back
-            const initialView = window.location.hash.replace('#', '') || 'index';
-
-            if (initialView === 'detail') {
-                // Nếu người dùng tải mới lại trang chi tiết (F5), điều hướng về danh sách để tránh hiển thị trống
-                navigate('list', false);
-                history.replaceState({ view: 'list' }, '', '#list');
-            } else {
-                navigate(initialView, false);
-                history.replaceState({ view: initialView }, '', '#' + initialView);
-            }
+            window.navigate('detail');
         };
-    </script>
-    <!-- Code injected by live-server -->
-    <script>
-        // <![CDATA[  <-- For SVG support
-        if ('WebSocket' in window) {
-            (function () {
-                function refreshCSS() {
-                    var sheets = [].slice.call(document.getElementsByTagName("link"));
-                    var head = document.getElementsByTagName("head")[0];
-                    for (var i = 0; i < sheets.length; ++i) {
-                        var elem = sheets[i];
-                        var parent = elem.parentElement || head;
-                        parent.removeChild(elem);
-                        var rel = elem.rel;
-                        if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-                            var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-                            elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-                        }
-                        parent.appendChild(elem);
-                    }
-                }
-                var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-                var address = protocol + window.location.host + window.location.pathname + '/ws';
-                var socket = new WebSocket(address);
-                socket.onmessage = function (msg) {
-                    if (msg.data == 'reload') window.location.reload();
-                    else if (msg.data == 'refreshcss') refreshCSS();
-                };
-                if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-                    console.log('Live reload enabled.');
-                    sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-                }
-            })();
-        }
-        else {
-            console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-        }
-        // ]]>
+
+        // --- CÁC HÀM UI ---
+        window.navigate = function (viewId, addToHistory = true) {
+            document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
+            const activeView = document.getElementById(`view-${viewId}`);
+            if (activeView) activeView.classList.add('active');
+            else { document.getElementById('view-index').classList.add('active'); viewId = 'index'; }
+            if (addToHistory) history.pushState({ view: viewId }, '', '#' + viewId);
+            window.scrollTo(0, 0);
+        };
+
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.view) window.navigate(event.state.view, false);
+            else {
+                const hash = window.location.hash.replace('#', '') || 'index';
+                window.navigate(hash === 'detail' ? 'list' : hash, false);
+            }
+        });
+
+        window.toggleMobileMenu = function () {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        };
+
+        window.openOrderModal = () => { document.getElementById('order-modal').classList.remove('hidden'); document.getElementById('order-modal').classList.add('flex'); };
+        window.closeOrderModal = () => { document.getElementById('order-modal').classList.add('hidden'); document.getElementById('order-modal').classList.remove('flex'); };
+
+        // Khởi tạo
+        const initialView = window.location.hash.replace('#', '') || 'index';
+        if (initialView === 'detail') { window.navigate('list', false); history.replaceState({ view: 'list' }, '', '#list'); }
+        else { window.navigate(initialView, false); history.replaceState({ view: initialView }, '', '#' + initialView); }
+
     </script>
 </body>
 

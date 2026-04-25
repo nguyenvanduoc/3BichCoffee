@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Menu - 3BichCoffee</title>
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.replace("login.html"); // Đá về trang đăng nhập
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #f59e0b;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 10px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div
+            class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="bg-orange-500 p-3 rounded-lg text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+                        <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
+                        <line x1="6" y1="2" x2="6" y2="4"></line>
+                        <line x1="10" y1="2" x2="10" y2="4"></line>
+                        <line x1="14" y1="2" x2="14" y2="4"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">3BichCoffee Admin</h1>
+                    <p class="text-gray-500 text-sm">Quản lý thực đơn & Phân trang dữ liệu</p>
+                </div>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-2">
+                <button onclick="seedCategories()"
+                    class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-lg transition text-sm font-medium border border-blue-200">
+                    Khởi tạo Danh mục
+                </button>
+                <button onclick="openFormModal()"
+                    class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-lg shadow-md transition font-semibold">
+                    + Thêm món mới
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter & Pagination Controls -->
+        <div
+            class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <span class="text-sm font-bold text-gray-500 uppercase">Lọc nhóm:</span>
+                <select id="filterCategory"
+                    class="border border-gray-200 p-2 rounded-lg bg-gray-50 text-sm focus:ring-2 focus:ring-orange-400 outline-none min-w-[150px]">
+                    <option value="Tất cả">Tất cả sản phẩm</option>
+                    <!-- Danh mục sẽ được tải từ Firebase -->
+                </select>
+            </div>
+
+            <div class="flex items-center gap-4 w-full md:w-auto justify-end">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-bold text-gray-500 uppercase">Hiển thị:</span>
+                    <select id="pageSize"
+                        class="border border-gray-200 p-2 rounded-lg bg-gray-50 text-sm focus:ring-2 focus:ring-orange-400 outline-none">
+                        <option value="10">10 món</option>
+                        <option value="20">20 món</option>
+                        <option value="50">50 món</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusBox" class="hidden mb-6 p-4 rounded-xl text-center font-medium shadow-sm border animate-pulse">
+        </div>
+
+        <!-- Table View -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Ảnh</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Sản phẩm</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Nhóm</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Đơn giá</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Thao
+                                tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody" class="divide-y divide-gray-50">
+                        <tr>
+                            <td colspan="5" class="p-10 text-center text-gray-400 italic">Đang đồng bộ dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Controls Footer -->
+            <div id="paginationFooter"
+                class="bg-gray-50 p-4 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div id="pageInfo" class="text-sm text-gray-500 font-medium italic">
+                    Hiển thị 0 trên 0 món
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btnPrev"
+                        class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                        Trang trước
+                    </button>
+                    <div id="pageNumbers" class="flex gap-1">
+                        <!-- Số trang hiện ở đây -->
+                    </div>
+                    <button id="btnNext"
+                        class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                        Trang sau
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form (Thêm/Sửa) -->
+    <div id="productModal"
+        class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div
+            class="bg-white rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl scale-up animate-in fade-in duration-300">
+            <div class="bg-orange-500 p-5 text-white flex justify-between items-center">
+                <h3 id="modalTitle" class="text-xl font-bold">Thêm món mới</h3>
+                <button onclick="closeFormModal()"
+                    class="text-3xl font-light hover:rotate-90 transition-transform">&times;</button>
+            </div>
+            <form id="productForm" class="p-8 space-y-5">
+                <input type="hidden" id="editMode" value="false">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">ID (Mã món)</label>
+                        <input type="text" id="pId" required placeholder="ca-phe-sua"
+                            class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tên hiển thị</label>
+                        <input type="text" id="pName" required placeholder="Cà Phê Sữa Đá"
+                            class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Giá bán (đ)</label>
+                        <input type="number" id="pPrice" required
+                            class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nhóm đồ uống</label>
+                        <select id="pCategory"
+                            class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all">
+                            <!-- Danh mục sẽ được tải từ Firebase -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- PHẦN UPLOAD ẢNH TỰ ĐỘNG -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Hình ảnh (Chọn file hoặc Dán
+                        link)</label>
+                    <div class="flex gap-2 items-center">
+                        <!-- Nút Upload File Ẩn -->
+                        <input type="file" id="fileUpload" accept="image/*" class="hidden" onchange="uploadImage(this)">
+
+                        <!-- Nút bấm hiển thị -->
+                        <button type="button" onclick="document.getElementById('fileUpload').click()"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-xl text-sm font-bold transition flex-shrink-0 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Tải ảnh lên
+                        </button>
+
+                        <!-- Ô chứa Link (sẽ tự động điền) -->
+                        <input type="text" id="pImage" required placeholder="Hoặc dán link ảnh vào đây..."
+                            class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all text-sm">
+                    </div>
+                    <p id="uploadStatus" class="text-xs mt-1 text-gray-400">Hỗ trợ JPG, PNG. Dung lượng tối đa 32MB.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mô tả món</label>
+                    <textarea id="pDesc" placeholder="Hương vị thế nào..."
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all h-20 resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center gap-3 p-4 bg-orange-50 rounded-2xl border border-orange-100">
+                    <input type="checkbox" id="pFeatured" class="w-5 h-5 accent-orange-500 rounded cursor-pointer">
+                    <label for="pFeatured" class="text-sm font-semibold text-orange-800 cursor-pointer">Sản phẩm nổi bật
+                        (Hiện trang chủ)</label>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="closeFormModal()"
+                        class="px-6 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition">Đóng</button>
+                    <button type="submit"
+                        class="px-10 py-3 bg-orange-500 text-white rounded-xl font-bold shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all transform active:scale-95">Lưu
+                        lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div id="confirmModal"
+        class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-[60] backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-8 text-center shadow-2xl">
+            <div class="w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Xác nhận xóa?</h3>
+            <p id="confirmText" class="text-gray-500 mb-8">Hành động này không thể hoàn tác.</p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()"
+                    class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition">Hủy</button>
+                <button id="btnConfirmDelete"
+                    class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-600 transition">Xác
+                    nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjCvkQJuC3N1flSB_4M0-_GP7ltVTH0Ko",
+            authDomain: "bichcoffee-c0ef8.firebaseapp.com",
+            projectId: "bichcoffee-c0ef8",
+            storageBucket: "bichcoffee-c0ef8.firebasestorage.app",
+            messagingSenderId: "1096220661361",
+            appId: "1:1096220661361:web:d36215b271d48f6a66add0",
+            measurementId: "G-GDMMHWJV24"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const productsCol = collection(db, "products");
+        const categoriesCol = collection(db, "categories"); // Collection mới cho danh mục
+
+        let allProducts = [];
+        let filteredProducts = [];
+        let allCategories = []; // Lưu trữ danh sách danh mục
+        let currentPage = 1;
+        let pageSize = 10;
+        let currentCategory = "Tất cả";
+        let currentDeleteId = null;
+
+        // --- THEO DÕI REALTIME DANH MỤC ---
+        onSnapshot(categoriesCol, (snapshot) => {
+            allCategories = [];
+            snapshot.forEach(doc => allCategories.push({ id: doc.id, ...doc.data() }));
+
+            // Sắp xếp danh mục theo trường order
+            allCategories.sort((a, b) => (a.order || 0) - (b.order || 0));
+            updateCategoryDropdowns();
+        }, (error) => console.error("Lỗi tải danh mục: ", error));
+
+        // Cập nhật giao diện 2 ô Select (Lọc và Thêm món)
+        function updateCategoryDropdowns() {
+            const filterSelect = document.getElementById('filterCategory');
+            const formSelect = document.getElementById('pCategory');
+
+            const currentFilter = filterSelect.value;
+            const currentFormVal = formSelect.value;
+
+            filterSelect.innerHTML = '<option value="Tất cả">Tất cả sản phẩm</option>';
+            formSelect.innerHTML = '';
+
+            allCategories.forEach(cat => {
+                filterSelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
+                formSelect.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
+            });
+
+            // Giữ lại lựa chọn cũ nếu có
+            if (currentFilter) filterSelect.value = currentFilter;
+            if (currentFormVal) formSelect.value = currentFormVal;
+        }
+
+        // --- THEO DÕI REALTIME SẢN PHẨM ---
+        onSnapshot(productsCol, (snapshot) => {
+            allProducts = [];
+            snapshot.forEach(doc => allProducts.push({ id: doc.id, ...doc.data() }));
+            applyFilterAndPagination();
+        }, (error) => showStatus("Lỗi Firestore: " + error.message, "bg-red-500 text-white"));
+
+        // --- LỌC & PHÂN TRANG ---
+        function applyFilterAndPagination() {
+            filteredProducts = currentCategory === "Tất cả"
+                ? allProducts
+                : allProducts.filter(p => p.category === currentCategory);
+
+            const totalItems = filteredProducts.length;
+            const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredProducts.slice(start, end);
+
+            renderTable(pageData);
+            renderPagination(totalItems, totalPages);
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('productTableBody');
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-400">Không tìm thấy sản phẩm nào.</td></tr>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = "fade-in hover:bg-orange-50/30 transition-all";
+                row.innerHTML = `
+                    <td class="p-5">
+                        <img src="${item.image}" class="w-12 h-12 object-cover rounded-lg border border-gray-100 shadow-sm" onerror="this.src='https://placehold.co/100x100?text=3Bich'">
+                    </td>
+                    <td class="p-5">
+                        <div class="font-bold text-gray-800">${item.name}</div>
+                        <div class="text-[10px] text-gray-400 font-mono">ID: ${item.id}</div>
+                    </td>
+                    <td class="p-5">
+                        <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] rounded font-bold border border-gray-200">${item.category}</span>
+                    </td>
+                    <td class="p-5 font-black text-orange-600">
+                        ${Number(item.price).toLocaleString('vi-VN')}đ
+                    </td>
+                    <td class="p-5">
+                        <div class="flex justify-center gap-2">
+                            <button onclick="editProduct('${item.id}')" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                            </button>
+                            <button onclick="requestDelete('${item.id}', '${item.name}')" class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderPagination(total, totalPages) {
+            document.getElementById('pageInfo').innerText = `Hiển thị món ${filteredProducts.length > 0 ? (currentPage - 1) * pageSize + 1 : 0} - ${Math.min(currentPage * pageSize, total)} trong tổng số ${total} món`;
+            document.getElementById('btnPrev').disabled = (currentPage === 1);
+            document.getElementById('btnNext').disabled = (currentPage === totalPages);
+
+            const pageNumbers = document.getElementById('pageNumbers');
+            pageNumbers.innerHTML = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i > 5 && i < totalPages) {
+                    if (i === 6) pageNumbers.innerHTML += `<span class="px-2 text-gray-400">...</span>`;
+                    continue;
+                }
+                const btn = document.createElement('button');
+                btn.className = `w-8 h-8 rounded-lg text-xs font-bold transition ${i === currentPage ? 'bg-orange-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-100'}`;
+                btn.innerText = i;
+                btn.onclick = () => { currentPage = i; applyFilterAndPagination(); };
+                pageNumbers.appendChild(btn);
+            }
+        }
+
+        document.getElementById('filterCategory').onchange = (e) => { currentCategory = e.target.value; currentPage = 1; applyFilterAndPagination(); };
+        document.getElementById('pageSize').onchange = (e) => { pageSize = Number(e.target.value); currentPage = 1; applyFilterAndPagination(); };
+        document.getElementById('btnPrev').onclick = () => { if (currentPage > 1) { currentPage--; applyFilterAndPagination(); } };
+        document.getElementById('btnNext').onclick = () => { if (currentPage < Math.ceil(filteredProducts.length / pageSize)) { currentPage++; applyFilterAndPagination(); } };
+
+        // --- FORM XỬ LÝ (CRUD) ---
+        const productForm = document.getElementById('productForm');
+        productForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('pId').value.trim();
+            const data = {
+                name: document.getElementById('pName').value.trim(),
+                price: Number(document.getElementById('pPrice').value),
+                category: document.getElementById('pCategory').value,
+                desc: document.getElementById('pDesc').value.trim(),
+                image: document.getElementById('pImage').value.trim(),
+                featured: document.getElementById('pFeatured').checked,
+                updatedAt: new Date().toISOString()
+            };
+            try {
+                showStatus("Đang lưu...", "bg-blue-500 text-white");
+                await setDoc(doc(db, "products", id), data, { merge: true });
+                showStatus("Lưu dữ liệu thành công!", "bg-green-500 text-white");
+                closeFormModal();
+            } catch (err) { showStatus("Lỗi: " + err.message, "bg-red-500 text-white"); }
+        };
+
+        // --- UPLOAD ẢNH QUA IMGBB API ---
+        window.uploadImage = async (input) => {
+            const file = input.files[0];
+            if (!file) return;
+
+            const uploadStatus = document.getElementById('uploadStatus');
+            const pImageInput = document.getElementById('pImage');
+
+            // --- ⚠️ ĐIỀN API KEY CỦA BẠN VÀO DÒNG DƯỚI NÀY ---
+            // Ví dụ: const IMGBB_API_KEY = "1234567890abcdef...";
+            const IMGBB_API_KEY = "ca80289226aaf6f4ef42d4fa5cfe231c";
+
+            if (IMGBB_API_KEY === "THAY_API_KEY_CUA_BAN_VAO_DAY" || IMGBB_API_KEY.trim() === "") {
+                uploadStatus.innerText = "❌ Lỗi: Bạn chưa thay API Key của ImgBB vào code!";
+                uploadStatus.className = "text-xs mt-1 text-red-500 font-bold";
+                alert("Vui lòng lấy API Key tại api.imgbb.com và dán vào biến IMGBB_API_KEY (khoảng dòng 328) trong code để tải ảnh nhé.");
+                return;
+            }
+
+            uploadStatus.innerText = "⏳ Đang tải ảnh lên đám mây, vui lòng đợi...";
+            uploadStatus.className = "text-xs mt-1 text-orange-500 font-bold animate-pulse";
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    pImageInput.value = data.data.url; // Tự động điền link vào ô input
+                    uploadStatus.innerText = "✅ Tải ảnh thành công!";
+                    uploadStatus.className = "text-xs mt-1 text-green-500 font-bold";
+                } else {
+                    uploadStatus.innerText = "❌ Lỗi: " + data.error.message;
+                    uploadStatus.className = "text-xs mt-1 text-red-500 font-bold";
+                }
+            } catch (error) {
+                uploadStatus.innerText = "❌ Lỗi mạng, không thể kết nối tới máy chủ tải ảnh!";
+                uploadStatus.className = "text-xs mt-1 text-red-500 font-bold";
+            }
+        };
+
+        // --- CÁC HÀM GIAO DIỆN ---
+        window.editProduct = async (id) => {
+            const snap = await getDoc(doc(db, "products", id));
+            if (snap.exists()) {
+                const data = snap.data();
+                document.getElementById('pId').value = id;
+                document.getElementById('pId').disabled = true;
+                document.getElementById('pName').value = data.name;
+                document.getElementById('pPrice').value = data.price;
+                document.getElementById('pCategory').value = data.category;
+                document.getElementById('pImage').value = data.image;
+                document.getElementById('pDesc').value = data.desc || "";
+                document.getElementById('pFeatured').checked = data.featured || false;
+                document.getElementById('editMode').value = "true";
+                document.getElementById('modalTitle').innerText = "Sửa sản phẩm";
+                openFormModal();
+            }
+        };
+
+        window.requestDelete = (id, name) => {
+            currentDeleteId = id;
+            document.getElementById('confirmText').innerText = `Xóa món "${name}"? Thao tác này sẽ xóa vĩnh viễn khỏi mây (Cloud).`;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        };
+
+        document.getElementById('btnConfirmDelete').onclick = async () => {
+            try {
+                await deleteDoc(doc(db, "products", currentDeleteId));
+                showStatus("Đã xóa!", "bg-orange-500 text-white");
+                closeConfirmModal();
+            } catch (err) { showStatus("Lỗi xóa: " + err.message, "bg-red-500 text-white"); }
+        };
+
+        window.openFormModal = () => document.getElementById('productModal').classList.remove('hidden');
+        window.closeFormModal = () => {
+            document.getElementById('productModal').classList.add('hidden');
+            productForm.reset();
+            document.getElementById('pId').disabled = false;
+            document.getElementById('editMode').value = "false";
+            document.getElementById('uploadStatus').innerText = "Hỗ trợ JPG, PNG. Dung lượng tối đa 32MB.";
+            document.getElementById('uploadStatus').className = "text-xs mt-1 text-gray-400";
+        };
+        window.closeConfirmModal = () => document.getElementById('confirmModal').classList.add('hidden');
+
+        // --- HÀM KHỞI TẠO DANH MỤC MẶC ĐỊNH LÊN FIREBASE ---
+        window.seedCategories = async () => {
+            const defaultCategories = [
+                { id: 'ca-phe', name: 'Cà Phê', order: 1 },
+                { id: 'tra-trai-cay', name: 'Trà & Trái Cây', order: 2 },
+                { id: 'cacao-matcha', name: 'Cacao & Matcha', order: 3 },
+                { id: 'soda-sua-chua', name: 'Soda & Sữa Chua', order: 4 }
+            ];
+
+            try {
+                showStatus("Đang đẩy danh mục lên Firebase...", "bg-blue-500 text-white");
+                for (const cat of defaultCategories) {
+                    await setDoc(doc(db, "categories", cat.id), cat);
+                }
+                showStatus("Khởi tạo danh mục thành công!", "bg-green-500 text-white");
+            } catch (err) {
+                showStatus("Lỗi khởi tạo: " + err.message, "bg-red-500 text-white");
+            }
+        };
+
+        function showStatus(text, classes) {
+            const box = document.getElementById('statusBox');
+            box.innerText = text;
+            box.className = `mb-6 p-4 rounded-xl text-center font-bold shadow-sm border ${classes}`;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 3000);
+        }
+    </script>
+</body>
+
+</html>
