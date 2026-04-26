@@ -200,7 +200,7 @@
 
     <script type="module">
         // Import Firestore query functions thay vì Auth
-        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { db } from "../firebaseConfig.js";
 
         // UI Elements
@@ -256,6 +256,17 @@
                     sessionStorage.setItem('isLoggedIn', 'true');
                     sessionStorage.setItem('loggedInName', nameInput); // Lưu tên để hiển thị
 
+                    // Lưu lịch sử Login
+                    try {
+                        await addDoc(collection(db, "SessionLogin"), {
+                            userName: nameInput,
+                            action: "login",
+                            timestamp: new Date().toISOString()
+                        });
+                    } catch (err) {
+                        console.error("Lỗi ghi log đăng nhập:", err);
+                    }
+
                     // Chuyển giao diện
                     checkLoginState();
                     loginForm.reset();
@@ -276,12 +287,59 @@
         };
 
         // --- 3. XỬ LÝ ĐĂNG XUẤT ---
-        document.getElementById('btnLogout').onclick = () => {
+        document.getElementById('btnLogout').onclick = async () => {
+            const loggedInName = sessionStorage.getItem('loggedInName') || 'Unknown';
+
+            // Lưu lịch sử Logout
+            try {
+                await addDoc(collection(db, "SessionLogin"), {
+                    userName: loggedInName,
+                    action: "logout",
+                    timestamp: new Date().toISOString()
+                });
+            } catch (err) {
+                console.error("Lỗi ghi log đăng xuất:", err);
+            }
+
             // Xóa dữ liệu phiên làm việc
             sessionStorage.removeItem('isLoggedIn');
             sessionStorage.removeItem('loggedInName');
             checkLoginState();
         };
+
+        // --- 4. TỰ ĐỘNG ĐĂNG XUẤT NẾU KHÔNG HOẠT ĐỘNG (60p) ---
+        let inactivityTimeout;
+        const resetInactivityTimeout = () => {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                clearTimeout(inactivityTimeout);
+                inactivityTimeout = setTimeout(async () => {
+                    const loggedInName = sessionStorage.getItem('loggedInName') || 'Unknown';
+                    try {
+                        await addDoc(collection(db, "SessionLogin"), {
+                            userName: loggedInName,
+                            action: "logout (timeout)",
+                            timestamp: new Date().toISOString()
+                        });
+                    } catch (err) {
+                        console.error("Lỗi ghi log timeout:", err);
+                    }
+                    sessionStorage.removeItem('isLoggedIn');
+                    sessionStorage.removeItem('loggedInName');
+                    checkLoginState();
+                    alert("Phiên đăng nhập đã hết hạn do không có thao tác trong 60 phút.");
+                }, 3600000); // 60s
+            }
+        };
+
+        // Bắt các sự kiện thao tác của người dùng
+        ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll'].forEach(evt => {
+            document.addEventListener(evt, resetInactivityTimeout);
+        });
+
+        // Kích hoạt lần đầu nếu đã đăng nhập sẵn
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            resetInactivityTimeout();
+        }
     </script>
 </body>
 
