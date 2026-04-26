@@ -137,13 +137,14 @@
                             <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Sản phẩm</th>
                             <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Nhóm</th>
                             <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Đơn giá</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Giá khuyến mãi</th>
                             <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Thao
                                 tác</th>
                         </tr>
                     </thead>
                     <tbody id="productTableBody" class="divide-y divide-gray-50">
                         <tr>
-                            <td colspan="5" class="p-10 text-center text-gray-400 italic">Đang đồng bộ dữ liệu...</td>
+                            <td colspan="6" class="p-10 text-center text-gray-400 italic">Đang đồng bộ dữ liệu...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -204,6 +205,14 @@
                         <input type="number" id="pPrice" required
                             class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all">
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Giá khuyến mãi (đ)</label>
+                        <input type="number" id="pDiscountPrice" placeholder="Trống nếu không có"
+                            class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nhóm đồ uống</label>
                         <select id="pCategory"
@@ -388,7 +397,7 @@
             tbody.innerHTML = "";
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-400">Không tìm thấy sản phẩm nào.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-10 text-center text-gray-400">Không tìm thấy sản phẩm nào.</td></tr>`;
                 return;
             }
 
@@ -408,6 +417,9 @@
                     </td>
                     <td class="p-5 font-black text-orange-600">
                         ${Number(item.price).toLocaleString('vi-VN')}đ
+                    </td>
+                    <td class="p-5 font-black text-red-600">
+                        ${item.discountPrice ? Number(item.discountPrice).toLocaleString('vi-VN') + 'đ' : '-'}
                     </td>
                     <td class="p-5">
                         <div class="flex justify-center gap-2">
@@ -465,6 +477,7 @@
             const data = {
                 name: document.getElementById('pName').value.trim(),
                 price: Number(document.getElementById('pPrice').value),
+                discountPrice: document.getElementById('pDiscountPrice').value ? Number(document.getElementById('pDiscountPrice').value) : null,
                 category: document.getElementById('pCategory').value,
                 desc: document.getElementById('pDesc').value.trim(),
                 image: document.getElementById('pImage').value.trim(),
@@ -534,6 +547,7 @@
                 document.getElementById('pId').disabled = true;
                 document.getElementById('pName').value = data.name;
                 document.getElementById('pPrice').value = data.price;
+                document.getElementById('pDiscountPrice').value = data.discountPrice || "";
                 document.getElementById('pCategory').value = data.category;
                 document.getElementById('pImage').value = data.image;
                 document.getElementById('pDesc').value = data.desc || "";
