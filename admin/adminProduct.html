@@ -176,8 +176,8 @@
     <div id="productModal"
         class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
         <div
-            class="bg-white rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl scale-up animate-in fade-in duration-300">
-            <div class="bg-orange-500 p-5 text-white flex justify-between items-center">
+            class="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl scale-up animate-in fade-in duration-300 max-h-[90vh] overflow-y-auto">
+            <div class="bg-orange-500 p-5 text-white flex justify-between items-center sticky top-0 z-10">
                 <h3 id="modalTitle" class="text-xl font-bold">Thêm món mới</h3>
                 <button onclick="closeFormModal()"
                     class="text-3xl font-light hover:rotate-90 transition-transform">&times;</button>
@@ -242,6 +242,15 @@
                 </div>
 
                 <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Thành phần nguyên liệu</label>
+                    <textarea id="pIngredients" placeholder="vd: Bột cacao nguyên chất, Kem whipping, Muối biển..."
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all h-20 resize-none"></textarea>
+                    <p class="text-[10px] text-gray-500 mt-1 italic">* Phân cách các thành phần bằng <strong
+                            class="text-orange-600 font-bold">dấu phẩy (,)</strong>. Hệ thống sẽ tự động tách thành danh
+                        sách (mảng).</p>
+                </div>
+
+                <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mô tả món</label>
                     <textarea id="pDesc" placeholder="Hương vị thế nào..."
                         class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-orange-400 outline-none transition-all h-20 resize-none"></textarea>
@@ -253,7 +262,7 @@
                         (Hiện trang chủ)</label>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-4">
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
                     <button type="button" onclick="closeFormModal()"
                         class="px-6 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition">Đóng</button>
                     <button type="submit"
@@ -292,6 +301,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, collection, onSnapshot, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Đưa cấu hình Firebase trực tiếp vào file để tránh lỗi import
         const firebaseConfig = {
             apiKey: "AIzaSyCjCvkQJuC3N1flSB_4M0-_GP7ltVTH0Ko",
             authDomain: "bichcoffee-c0ef8.firebaseapp.com",
@@ -304,6 +314,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
         const productsCol = collection(db, "products");
         const categoriesCol = collection(db, "categories"); // Collection mới cho danh mục
 
@@ -444,12 +455,20 @@
         productForm.onsubmit = async (e) => {
             e.preventDefault();
             const id = document.getElementById('pId').value.trim();
+
+            // Xử lý chuỗi thành phần nhập vào -> chuyển thành mảng (Array)
+            const ingredientsRaw = document.getElementById('pIngredients').value.trim();
+            const ingredientsArr = ingredientsRaw !== ""
+                ? ingredientsRaw.split(',').map(item => item.trim()).filter(item => item !== "")
+                : [];
+
             const data = {
                 name: document.getElementById('pName').value.trim(),
                 price: Number(document.getElementById('pPrice').value),
                 category: document.getElementById('pCategory').value,
                 desc: document.getElementById('pDesc').value.trim(),
                 image: document.getElementById('pImage').value.trim(),
+                ingredients: ingredientsArr, // Gắn mảng nguyên liệu vào data
                 featured: document.getElementById('pFeatured').checked,
                 updatedAt: new Date().toISOString()
             };
@@ -469,8 +488,6 @@
             const uploadStatus = document.getElementById('uploadStatus');
             const pImageInput = document.getElementById('pImage');
 
-            // --- ⚠️ ĐIỀN API KEY CỦA BẠN VÀO DÒNG DƯỚI NÀY ---
-            // Ví dụ: const IMGBB_API_KEY = "1234567890abcdef...";
             const IMGBB_API_KEY = "ca80289226aaf6f4ef42d4fa5cfe231c";
 
             if (IMGBB_API_KEY === "THAY_API_KEY_CUA_BAN_VAO_DAY" || IMGBB_API_KEY.trim() === "") {
@@ -495,7 +512,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    pImageInput.value = data.data.url; // Tự động điền link vào ô input
+                    pImageInput.value = data.data.url;
                     uploadStatus.innerText = "✅ Tải ảnh thành công!";
                     uploadStatus.className = "text-xs mt-1 text-green-500 font-bold";
                 } else {
@@ -520,6 +537,14 @@
                 document.getElementById('pCategory').value = data.category;
                 document.getElementById('pImage').value = data.image;
                 document.getElementById('pDesc').value = data.desc || "";
+
+                // Nếu data có thuộc tính ingredients dạng mảng, gộp lại thành chuỗi ngăn cách bằng phẩy
+                if (data.ingredients && Array.isArray(data.ingredients)) {
+                    document.getElementById('pIngredients').value = data.ingredients.join(", ");
+                } else {
+                    document.getElementById('pIngredients').value = "";
+                }
+
                 document.getElementById('pFeatured').checked = data.featured || false;
                 document.getElementById('editMode').value = "true";
                 document.getElementById('modalTitle').innerText = "Sửa sản phẩm";
