@@ -298,6 +298,59 @@
         </div>
     </div>
 
+    <!-- AI Chatbot Widget -->
+    <div id="chatbot-widget" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end">
+        <!-- Chat Window -->
+        <div id="chatbot-window" class="hidden bg-white w-[90vw] sm:w-96 rounded-2xl shadow-2xl border border-coffee-100 overflow-hidden mb-4 flex-col">
+            <!-- Header -->
+            <div class="bg-coffee-600 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3 text-coffee-600 shadow-inner">
+                        <i class="fa-solid fa-robot text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold">3Bich Assistant</h4>
+                        <p class="text-xs text-coffee-200">Luôn sẵn sàng hỗ trợ</p>
+                    </div>
+                </div>
+                <button onclick="toggleChatbot()" class="text-coffee-100 hover:text-white transition-colors focus:outline-none">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Messages -->
+            <div id="chatbot-messages" class="p-4 h-80 overflow-y-auto flex flex-col space-y-3 bg-coffee-50 scroll-smooth">
+                <!-- Welcome Message -->
+                <div class="flex items-start">
+                    <div class="w-8 h-8 rounded-full bg-coffee-600 text-white flex items-center justify-center mr-2 flex-shrink-0">
+                        <i class="fa-solid fa-robot text-xs"></i>
+                    </div>
+                    <div class="bg-white text-coffee-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-sm">
+                        Chào bạn! Mình là trợ lý AI của 3BichCoffee. Bạn cần hỗ trợ thông tin gì về thực đơn, hay địa chỉ quán ạ?
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Input -->
+            <div class="p-3 bg-white border-t border-coffee-100 flex items-center">
+                <input type="text" id="chatbot-input" placeholder="Nhập tin nhắn..." 
+                    class="flex-1 bg-coffee-50 text-coffee-800 text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-coffee-500 transition-shadow mr-2"
+                    onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()" class="w-10 h-10 bg-coffee-600 hover:bg-coffee-500 text-white rounded-full flex items-center justify-center transition-colors focus:outline-none shadow-md flex-shrink-0">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Toggle Button -->
+        <button onclick="toggleChatbot()" id="chatbot-toggle-btn" class="w-14 h-14 bg-coffee-600 hover:bg-coffee-500 text-white rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none relative">
+            <i class="fa-solid fa-comments text-2xl absolute transition-all duration-300" id="chatbot-icon-msg"></i>
+            <i class="fa-solid fa-xmark text-2xl absolute opacity-0 scale-50 transition-all duration-300" id="chatbot-icon-close"></i>
+            <!-- Notification Badge -->
+            <span id="chatbot-badge" class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>
+        </button>
+    </div>
+
     <script type="module" src="main.js"></script>
     <!-- Code injected by live-server -->
     <script>

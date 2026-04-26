@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê Truy cập - 3BichCoffee</title>
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.replace("login.html");
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 10px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div
+            class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-500 p-3 rounded-lg text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Thống kê Truy cập</h1>
+                    <p class="text-gray-500 text-sm">Theo dõi chi tiết khách hàng và hiệu suất website</p>
+                </div>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-2">
+                <a href="adminProduct.html"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition text-sm font-medium border border-gray-200 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"></path>
+                    </svg>
+                    Quản lý Menu
+                </a>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-2">Truy cập hôm nay</p>
+                <h3 id="statTodayVisits" class="text-3xl font-black text-blue-600">0</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-2">TB Thời gian ở lại</p>
+                <h3 id="statAvgDuration" class="text-3xl font-black text-orange-500">0s</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-2">Thiết bị Mobile</p>
+                <h3 id="statMobileRatio" class="text-3xl font-black text-purple-600">0%</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-2">Tổng lượt truy cập</p>
+                <h3 id="statTotalVisits" class="text-3xl font-black text-gray-800">0</h3>
+            </div>
+        </div>
+
+        <!-- Main Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h2 class="font-bold text-gray-700">Danh sách phiên truy cập gần đây</h2>
+                <div class="flex items-center gap-2">
+                    <button onclick="refreshData()" class="p-2 hover:bg-gray-200 rounded-lg transition" title="Làm mới">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Thời gian</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Địa chỉ IP</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Thiết bị</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Trình duyệt</th>
+                            <th class="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Ở lại</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analyticsTableBody" class="divide-y divide-gray-50">
+                        <tr>
+                            <td colspan="5" class="p-10 text-center text-gray-400 italic">Đang tải dữ liệu từ Cloud...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjCvkQJuC3N1flSB_4M0-_GP7ltVTH0Ko",
+            authDomain: "bichcoffee-c0ef8.firebaseapp.com",
+            projectId: "bichcoffee-c0ef8",
+            storageBucket: "bichcoffee-c0ef8.firebasestorage.app",
+            messagingSenderId: "1096220661361",
+            appId: "1:1096220661361:web:d36215b271d48f6a66add0",
+            measurementId: "G-GDMMHWJV24"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        function formatDuration(seconds) {
+            if (!seconds) return "0s";
+            if (seconds < 60) return seconds + "s";
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return mins + "m " + secs + "s";
+        }
+
+        function formatDateTime(timestamp) {
+            if (!timestamp) return "-";
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleString('vi-VN');
+        }
+
+        window.refreshData = () => {
+            // Re-fetch logic triggered by onSnapshot automatically
+        };
+
+        const q = query(collection(db, "visitor_sessions"), orderBy("startTime", "desc"), limit(100));
+
+        onSnapshot(q, (snapshot) => {
+            const tbody = document.getElementById('analyticsTableBody');
+            tbody.innerHTML = "";
+
+            let todayCount = 0;
+            let totalSeconds = 0;
+            let mobileCount = 0;
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const row = document.createElement('tr');
+                row.className = "fade-in hover:bg-blue-50/30 transition-all";
+
+                if (data.date === todayStr) todayCount++;
+                totalSeconds += (data.duration || 0);
+                if (data.device === "Mobile") mobileCount++;
+
+                row.innerHTML = `
+                    <td class="p-5">
+                        <div class="font-medium text-gray-800">${formatDateTime(data.startTime)}</div>
+                        <div class="text-[10px] text-gray-400 font-mono">${doc.id}</div>
+                    </td>
+                    <td class="p-5">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded border border-gray-200 font-mono">${data.ip || 'Unknown'}</span>
+                    </td>
+                    <td class="p-5">
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            ${data.device === 'Mobile' ? '📱 Mobile' : data.device === 'Tablet' ? '平板 Tablet' : '💻 Desktop'}
+                        </div>
+                    </td>
+                    <td class="p-5 text-sm text-gray-600">${data.browser || 'Other'}</td>
+                    <td class="p-5 font-bold text-blue-600">${formatDuration(data.duration)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update stats
+            document.getElementById('statTodayVisits').innerText = todayCount;
+            document.getElementById('statTotalVisits').innerText = snapshot.size;
+            document.getElementById('statAvgDuration').innerText = formatDuration(Math.round(totalSeconds / (snapshot.size || 1)));
+            document.getElementById('statMobileRatio').innerText = Math.round((mobileCount / (snapshot.size || 1)) * 100) + "%";
+
+            if (snapshot.empty) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-400">Chưa có dữ liệu truy cập nào.</td></tr>`;
+            }
+        });
+    </script>
+</body>
+
+</html>

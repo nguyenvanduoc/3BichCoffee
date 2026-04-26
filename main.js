@@ -1,4 +1,4 @@
-import { collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, onSnapshot, doc, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { db } from "./firebaseConfig.js";
 
 // State lưu trữ dữ liệu tải từ Firebase
@@ -248,3 +248,156 @@ if (initialId) {
     window.navigate('index', false);
     history.replaceState({ view: 'index' }, '', window.location.pathname);
 }
+
+// --- CHATBOT WIDGET LOGIC ---
+let isChatbotOpen = false;
+
+window.toggleChatbot = function () {
+    const windowEl = document.getElementById('chatbot-window');
+    const msgIcon = document.getElementById('chatbot-icon-msg');
+    const closeIcon = document.getElementById('chatbot-icon-close');
+    const badge = document.getElementById('chatbot-badge');
+
+    isChatbotOpen = !isChatbotOpen;
+
+    if (isChatbotOpen) {
+        windowEl.classList.remove('hidden');
+        windowEl.classList.add('flex');
+        msgIcon.classList.add('opacity-0', 'scale-50');
+        closeIcon.classList.remove('opacity-0', 'scale-50');
+        if (badge) badge.classList.add('hidden'); // Hide badge when opened
+    } else {
+        windowEl.classList.add('hidden');
+        windowEl.classList.remove('flex');
+        msgIcon.classList.remove('opacity-0', 'scale-50');
+        closeIcon.classList.add('opacity-0', 'scale-50');
+    }
+};
+
+window.sendChatMessage = function () {
+    const inputEl = document.getElementById('chatbot-input');
+    const message = inputEl.value.trim();
+    if (!message) return;
+
+    // Hiển thị tin nhắn của người dùng
+    appendMessage(message, 'user');
+    inputEl.value = '';
+
+    // Scroll to bottom
+    const messagesEl = document.getElementById('chatbot-messages');
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    // Giả lập bot gõ phím
+    setTimeout(() => {
+        botReply(message);
+    }, 600);
+};
+
+function appendMessage(text, sender) {
+    const messagesEl = document.getElementById('chatbot-messages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'flex items-start mb-3 ' + (sender === 'user' ? 'justify-end' : '');
+
+    if (sender === 'user') {
+        msgDiv.innerHTML = `
+            <div class="bg-coffee-600 text-white p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] text-sm">
+                ${text}
+            </div>
+        `;
+    } else {
+        msgDiv.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-coffee-600 text-white flex items-center justify-center mr-2 flex-shrink-0 mt-1">
+                <i class="fa-solid fa-robot text-xs"></i>
+            </div>
+            <div class="bg-white text-coffee-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-sm leading-relaxed">
+                ${text}
+            </div>
+        `;
+    }
+
+    messagesEl.appendChild(msgDiv);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function botReply(userMsg) {
+    const lowerMsg = userMsg.toLowerCase();
+    let reply = "Xin lỗi, mình là Trợ lý AI đang trong giai đoạn học hỏi nên chưa hiểu rõ ý bạn. Bạn có thể liên hệ Zalo 0399.232.692 để được hỗ trợ tốt nhất nhé!";
+
+    if (lowerMsg.includes("chào") || lowerMsg.includes("hi") || lowerMsg.includes("hello")) {
+        reply = "Chào bạn! Mình có thể giúp gì cho bạn hôm nay?";
+    } else if (lowerMsg.includes("giá") || lowerMsg.includes("bao nhiêu")) {
+        reply = "Giá các món bên mình dao động từ 15k đến 50k tùy loại. Bạn có thể vào mục <b>Thực Đơn</b> để xem chi tiết nhé!";
+    } else if (lowerMsg.includes("menu") || lowerMsg.includes("thực đơn") || lowerMsg.includes("có món gì")) {
+        reply = "Bên mình chuyên cà phê mộc, cà phê sữa, trà sữa, trà trái cây và nhiều món khác. Bạn có thể nhấn vào mục Thực Đơn để xem chi tiết nhé!";
+    } else if (lowerMsg.includes("địa chỉ") || lowerMsg.includes("ở đâu") || lowerMsg.includes("quán")) {
+        reply = "Quán hiện đang giao hàng tận nơi tại khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?";
+    } else if (lowerMsg.includes("liên hệ") || lowerMsg.includes("sđt") || lowerMsg.includes("số điện thoại") || lowerMsg.includes("zalo")) {
+        reply = "Bạn có thể liên hệ trực tiếp qua số điện thoại hoặc Zalo: <b>0399.232.692</b> nha!";
+    }
+
+    appendMessage(reply, 'bot');
+}
+
+// --- ANALYTICS TRACKING ---
+async function trackVisitorSession() {
+    try {
+        // 1. Lấy IP (Sử dụng ipify)
+        let ip = "Unknown";
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            ip = data.ip;
+        } catch (err) { console.log("Không lấy được IP"); }
+
+        // 2. Phân tích Thiết bị & Trình duyệt
+        const ua = navigator.userAgent;
+        let device = "Desktop";
+        if (/Mobi|Android/i.test(ua)) device = "Mobile";
+        else if (/Tablet|iPad/i.test(ua)) device = "Tablet";
+
+        let browser = "Other";
+        if (ua.includes("Chrome") && !ua.includes("Edg")) browser = "Chrome";
+        else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
+        else if (ua.includes("Firefox")) browser = "Firefox";
+        else if (ua.includes("Edg")) browser = "Edge";
+
+        // 3. Tạo session trên Firestore
+        const sessionData = {
+            ip: ip,
+            device: device,
+            browser: browser,
+            startTime: serverTimestamp(),
+            date: new Date().toISOString().split('T')[0],
+            duration: 0,
+            userAgent: ua
+        };
+
+        const docRef = await addDoc(collection(db, "visitor_sessions"), sessionData);
+        const sessionId = docRef.id;
+        const startTime = Date.now();
+
+        // 4. Cập nhật thời gian ở lại (Cập nhật mỗi 20 giây để đảm bảo chính xác)
+        setInterval(() => {
+            const duration = Math.round((Date.now() - startTime) / 1000);
+            updateDoc(doc(db, "visitor_sessions", sessionId), {
+                duration: duration,
+                lastActive: serverTimestamp()
+            });
+        }, 20000);
+
+        // Cập nhật khi đóng trang
+        window.addEventListener('beforeunload', () => {
+            const duration = Math.round((Date.now() - startTime) / 1000);
+            updateDoc(doc(db, "visitor_sessions", sessionId), {
+                duration: duration,
+                endTime: serverTimestamp()
+            });
+        });
+
+    } catch (error) {
+        console.error("Lỗi tracking:", error);
+    }
+}
+
+// Chạy tracking khi load trang
+trackVisitorSession();
