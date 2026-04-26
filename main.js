@@ -19,6 +19,17 @@ onSnapshot(collection(db, "products"), (snapshot) => {
     window.coffeesData = [];
     snapshot.forEach(doc => window.coffeesData.push({ id: doc.id, ...doc.data() }));
     renderSanPhams();
+
+    // Xử lý link trực tiếp vào chi tiết sản phẩm qua URL parameter
+    if (!window.initialProductChecked) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        if (id) {
+            window.xemChiTiet(id, false);
+            history.replaceState({ view: 'detail', productId: id }, '', '?id=' + id);
+        }
+        window.initialProductChecked = true;
+    }
 });
 
 // 3. TẢI CẤU HÌNH GIỚI THIỆU TỪ FIREBASE (CẬP NHẬT FOOTER)
@@ -145,7 +156,7 @@ function renderListOnly() {
 }
 
 // Xem chi tiết
-window.xemChiTiet = function (coffeeId) {
+window.xemChiTiet = function (coffeeId, addToHistory = true) {
     const coffee = window.coffeesData.find(c => c.id === coffeeId);
     if (!coffee) return;
 
@@ -168,24 +179,49 @@ window.xemChiTiet = function (coffeeId) {
         if (ingredientsSection) ingredientsSection.classList.add('hidden');
     }
 
-    window.navigate('detail');
+    window.navigate('detail', addToHistory, coffeeId);
 };
 
 // --- CÁC HÀM UI ---
-window.navigate = function (viewId, addToHistory = true) {
+window.navigate = function (viewId, addToHistory = true, productId = null) {
     document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
     const activeView = document.getElementById(`view-${viewId}`);
     if (activeView) activeView.classList.add('active');
     else { document.getElementById('view-index').classList.add('active'); viewId = 'index'; }
-    if (addToHistory) history.pushState({ view: viewId }, '', '#' + viewId);
+
+    if (addToHistory) {
+        let url = window.location.pathname;
+        if (viewId === 'detail' && productId) {
+            url += '?id=' + productId;
+        } else if (viewId !== 'index') {
+            url += '?view=' + viewId;
+        }
+        history.pushState({ view: viewId, productId }, '', url);
+    }
     window.scrollTo(0, 0);
 };
 
 window.addEventListener('popstate', (event) => {
-    if (event.state && event.state.view) window.navigate(event.state.view, false);
-    else {
-        const hash = window.location.hash.replace('#', '') || 'index';
-        window.navigate(hash === 'detail' ? 'list' : hash, false);
+    if (event.state && event.state.view) {
+        if (event.state.view === 'detail' && event.state.productId) {
+            window.xemChiTiet(event.state.productId, false);
+        } else {
+            window.navigate(event.state.view, false);
+        }
+    } else {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const view = urlParams.get('view');
+
+        if (id) {
+            if (window.coffeesData && window.coffeesData.length > 0) {
+                window.xemChiTiet(id, false);
+            }
+        } else if (view === 'list') {
+            window.navigate('list', false);
+        } else {
+            window.navigate('index', false);
+        }
     }
 });
 
@@ -198,6 +234,17 @@ window.openOrderModal = () => { document.getElementById('order-modal').classList
 window.closeOrderModal = () => { document.getElementById('order-modal').classList.add('hidden'); document.getElementById('order-modal').classList.remove('flex'); };
 
 // Khởi tạo
-const initialView = window.location.hash.replace('#', '') || 'index';
-if (initialView === 'detail') { window.navigate('list', false); history.replaceState({ view: 'list' }, '', '#list'); }
-else { window.navigate(initialView, false); history.replaceState({ view: initialView }, '', '#' + initialView); }
+const urlParams = new URLSearchParams(window.location.search);
+const initialId = urlParams.get('id');
+const initialView = urlParams.get('view');
+const legacyHash = window.location.hash.replace('#', '');
+
+if (initialId) {
+    // Được xử lý trong onSnapshot khi data load xong
+} else if (initialView === 'list' || legacyHash === 'list') {
+    window.navigate('list', false);
+    history.replaceState({ view: 'list' }, '', '?view=list');
+} else {
+    window.navigate('index', false);
+    history.replaceState({ view: 'index' }, '', window.location.pathname);
+}
