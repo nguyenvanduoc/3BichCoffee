@@ -149,7 +149,7 @@ const coffees = [
         name: 'Trà Mãng Cầu',
         price: 20000,
         categoryId: 2,
-        category: 'Trà & Trái Cây',
+        category: 'Trà & Trái Cây2',
         desc: 'Trà kết hợp mãng cầu (na) tươi xay nhuyễn. Vị ngọt tự nhiên, thơm lừng, mang hương vị nhiệt đới đặc trưng.',
         ingredients: ['Trà xanh', 'Mãng cầu tươi', 'Đường', 'Đá viên'],
         image: 'https://images.unsplash.com/photo-1499638673689-79a0b5115d87?auto=format&fit=crop&w=600&q=80',
