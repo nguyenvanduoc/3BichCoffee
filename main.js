@@ -1,4 +1,4 @@
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { db } from "./firebaseConfig.js";
 
 // State lưu trữ dữ liệu tải từ Firebase
@@ -19,6 +19,33 @@ onSnapshot(collection(db, "products"), (snapshot) => {
     window.coffeesData = [];
     snapshot.forEach(doc => window.coffeesData.push({ id: doc.id, ...doc.data() }));
     renderSanPhams();
+});
+
+// 3. TẢI CẤU HÌNH GIỚI THIỆU TỪ FIREBASE (CẬP NHẬT FOOTER)
+onSnapshot(doc(db, "settings", "introduce"), (docSnap) => {
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        const desc = data.description || "";
+        const contact = data.contact || "";
+
+        const footerDesc = document.getElementById('footer-desc');
+        const footerZalo = document.getElementById('footer-zalo');
+        const modalZalo = document.getElementById('modal-zalo');
+        const modalPhone = document.getElementById('modal-phone');
+
+        if (footerDesc && desc) {
+            footerDesc.innerHTML = `${desc.replace(/\n/g, '<br/>')}<br/><br/>Liên hệ: ${contact || ''}`;
+        }
+
+        if (contact) {
+            const cleanPhone = contact.replace(/\D/g, '');
+            if (cleanPhone) {
+                if (footerZalo) footerZalo.href = `https://id.zalo.me/${cleanPhone}`;
+                if (modalZalo) modalZalo.href = `https://id.zalo.me/${cleanPhone}`;
+                if (modalPhone) modalPhone.href = `tel:${cleanPhone}`;
+            }
+        }
+    }
 });
 
 // Hàm Format Tiền
@@ -42,9 +69,9 @@ window.taoTheSanPham = function (coffee) {
                 <h3 class="text-xl font-bold text-coffee-900 mb-2 line-clamp-2">${coffee.name}</h3>
                 <div class="mt-auto flex justify-between items-center pt-4">
                     <div>
-                        ${coffee.discountPrice 
-                            ? `<span class="text-lg font-black text-red-600">${window.formatVND(coffee.discountPrice)}</span> <span class="text-sm font-medium text-gray-400 line-through ml-1">${window.formatVND(coffee.price)}</span>`
-                            : `<span class="text-lg font-black text-coffee-600">${window.formatVND(coffee.price)}</span>`}
+                        ${coffee.discountPrice
+            ? `<span class="text-lg font-black text-red-600">${window.formatVND(coffee.discountPrice)}</span> <span class="text-sm font-medium text-gray-400 line-through ml-1">${window.formatVND(coffee.price)}</span>`
+            : `<span class="text-lg font-black text-coffee-600">${window.formatVND(coffee.price)}</span>`}
                     </div>
                     <button class="w-10 h-10 rounded-full bg-coffee-100 text-coffee-700 flex items-center justify-center group-hover:bg-coffee-600 group-hover:text-white transition-colors">
                         <i class="fa-solid fa-arrow-right"></i>
@@ -125,7 +152,7 @@ window.xemChiTiet = function (coffeeId) {
     document.getElementById('detail-img').src = coffee.image;
     document.getElementById('detail-category').textContent = coffee.category;
     document.getElementById('detail-title').textContent = coffee.name;
-    document.getElementById('detail-price').innerHTML = coffee.discountPrice 
+    document.getElementById('detail-price').innerHTML = coffee.discountPrice
         ? `<span class="text-red-600">${window.formatVND(coffee.discountPrice)}</span> <span class="text-lg text-gray-400 line-through ml-2">${window.formatVND(coffee.price)}</span>`
         : window.formatVND(coffee.price);
     document.getElementById('detail-desc').textContent = coffee.desc || "Hương vị hấp dẫn, đánh thức mọi giác quan.";
@@ -133,7 +160,7 @@ window.xemChiTiet = function (coffeeId) {
     // Kiểm tra nếu có mảng ingredients thì render, không thì ẩn toàn bộ khung thành phần
     const ingredients = coffee.ingredients || [];
     const ingredientsSection = document.getElementById('ingredients-section');
-    
+
     if (ingredients.length > 0) {
         document.getElementById('detail-ingredients').innerHTML = ingredients.map(ing => `<li>${ing}</li>`).join('');
         if (ingredientsSection) ingredientsSection.classList.remove('hidden');

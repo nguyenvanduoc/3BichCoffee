@@ -111,26 +111,14 @@
         </section>
 
         <!-- Content section -->
-        <section class="py-16 bg-white">
+        <section id="introContentSection" class="py-16 bg-white hidden">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-12 items-center">
-                <div class="md:w-1/2">
-                    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80"
-                        alt="Cafe interior" class="rounded-2xl shadow-xl w-full h-auto">
+                <div id="introMediaContainer"
+                    class="md:w-1/2 w-full h-[400px] flex items-center justify-center rounded-2xl overflow-hidden shadow-xl hidden">
                 </div>
-                <div class="md:w-1/2">
-                    <h2 class="text-3xl font-bold text-coffee-900 mb-6">Hơn cả một thức uống</h2>
-                    <p class="text-coffee-700 mb-4 leading-relaxed">Được thành lập vào năm 2020, 3BichCoffee không
-                        chỉ là nơi bạn đến để thưởng thức một ly cà phê ngon, mà còn là trạm dừng chân để tìm lại sự
-                        cân bằng trong cuộc sống.</p>
-                    <p class="text-coffee-700 mb-6 leading-relaxed">Chúng tôi cam kết sử dụng 100% hạt cà phê nội
-                        địa, được rang mộc theo tiêu chuẩn khắt khe nhất để mang lại hương vị nguyên bản, sạch và an
-                        toàn cho sức khỏe.</p>
-
-                    <div class="bg-coffee-50 p-6 rounded-xl border-l-4 border-coffee-500">
-                        <h3 class="font-bold text-coffee-900 mb-2">Triết lý của chúng tôi</h3>
-                        <p class="text-coffee-700 italic">"Mỗi tách cà phê là một tác phẩm nghệ thuật, được pha chế
-                            bằng cả trái tim."</p>
-                    </div>
+                <div id="introTextContainer" class="md:w-1/2 hidden">
+                    <h2 id="introTitle" class="text-3xl font-bold text-coffee-900 mb-6 hidden"></h2>
+                    <div id="introDesc" class="text-coffee-700 leading-relaxed whitespace-pre-line hidden"></div>
                 </div>
             </div>
         </section>
@@ -140,40 +128,41 @@
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <!-- Location -->
-                    <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                    <div id="introAddressContainer" class="bg-white p-8 rounded-2xl shadow-sm text-center hidden">
                         <div
                             class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
                             <i class="fa-solid fa-location-dot"></i>
                         </div>
                         <h3 class="font-bold text-xl text-coffee-900 mb-2">Địa Chỉ</h3>
-                        <p class="text-coffee-600">22 Nguyễn Huệ, Phước Dân,<br>Ninh Phước, Ninh Thuận</p>
+                        <p id="introAddress" class="text-coffee-600 whitespace-pre-line"></p>
                     </div>
                     <!-- Hours -->
-                    <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                    <div id="introHoursContainer" class="bg-white p-8 rounded-2xl shadow-sm text-center hidden">
                         <div
                             class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
                             <i class="fa-solid fa-clock"></i>
                         </div>
                         <h3 class="font-bold text-xl text-coffee-900 mb-2">Giờ Mở Cửa</h3>
-                        <p class="text-coffee-600">Thứ 2 - Chủ nhật: 06:00 - 10:30</p>
+                        <p id="introHours" class="text-coffee-600"></p>
                     </div>
                     <!-- Contact -->
-                    <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+                    <div id="introContactContainer" class="bg-white p-8 rounded-2xl shadow-sm text-center hidden">
                         <div
                             class="w-16 h-16 bg-coffee-200 text-coffee-700 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
                             <i class="fa-solid fa-phone"></i>
                         </div>
                         <h3 class="font-bold text-xl text-coffee-900 mb-2">Liên Hệ</h3>
-                        <p class="text-coffee-600">Điện thoại / Zalo: <a href="https://id.zalo.me/0399232692"
-                                target="_blank" class="text-coffee-600 hover:text-coffee-800 underline">0399.232.692</a>
+                        <p class="text-coffee-600">Điện thoại / Zalo: <a id="introContactLink" href="#" target="_blank"
+                                class="text-coffee-600 hover:text-coffee-800 underline"></a>
                         </p>
                     </div>
                 </div>
 
                 <!-- Google Maps Embed -->
-                <div class="mt-12 rounded-2xl overflow-hidden shadow-sm border border-coffee-100 h-[450px]">
-                    <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-                        src="https://maps.google.com/maps?q=22%20Đ.%20Nguyễn%20Huệ,%20TT.%20Phước%20Dân,%20Ninh%20Phước,%20Khánh%20Hòa,%20Vietnam&t=&z=15&ie=UTF8&iwloc=&output=embed">
+                <div id="introMapContainer"
+                    class="mt-12 rounded-2xl overflow-hidden shadow-sm border border-coffee-100 h-[450px] hidden">
+                    <iframe id="introMapIframe" width="100%" height="100%" frameborder="0" scrolling="no"
+                        marginheight="0" marginwidth="0" src="">
                     </iframe>
                 </div>
             </div>
@@ -192,7 +181,7 @@
                 <p class="text-sm">Bắt nguồn từ tình yêu với hạt cà phê Việt Nam và mong muốn gói ghém trọn vẹn sự thanh
                     bình, thảnh thơi của một buổi sáng vùng quê vào từng tách cà phê ấm nóng.
                     </br>
-                    Liên hệ : 0399.232.692 Zalo / Phone.
+                    Liên hệ : 0399.232.692 Zalo / Phone
                 </p>
             </div>
             <div>
@@ -242,6 +231,106 @@
 
     <!-- Shared Common Script -->
     <script src="common.js"></script>
+
+    <script type="module">
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { db } from "./firebaseConfig.js";
+
+        const fetchIntroduce = async () => {
+            try {
+                const docSnap = await getDoc(doc(db, "settings", "introduce"));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+
+                    const title = data.title || "";
+                    const desc = data.description || "";
+                    const media = data.mediaLink || "";
+                    const address = data.address || "";
+                    const hours = data.hours || "";
+                    const contact = data.contact || "";
+
+                    const section = document.getElementById('introContentSection');
+                    const mediaContainer = document.getElementById('introMediaContainer');
+                    const textContainer = document.getElementById('introTextContainer');
+                    const titleEl = document.getElementById('introTitle');
+                    const descEl = document.getElementById('introDesc');
+
+                    let hasContent = false;
+
+                    if (media) {
+                        hasContent = true;
+                        mediaContainer.classList.remove('hidden');
+                        if (media.includes('youtube.com') || media.includes('youtu.be')) {
+                            let videoId = "";
+                            if (media.includes('v=')) {
+                                videoId = media.split('v=')[1].split('&')[0];
+                            } else if (media.includes('youtu.be/')) {
+                                videoId = media.split('youtu.be/')[1].split('?')[0];
+                            }
+                            if (videoId) {
+                                mediaContainer.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                            }
+                        } else {
+                            mediaContainer.innerHTML = `<img src="${media}" class="w-full h-full object-cover" alt="Introduce Media">`;
+                        }
+                    }
+
+                    if (title || desc) {
+                        hasContent = true;
+                        textContainer.classList.remove('hidden');
+                        if (title) {
+                            titleEl.innerText = title;
+                            titleEl.classList.remove('hidden');
+                        }
+                        if (desc) {
+                            descEl.innerText = desc;
+                            descEl.classList.remove('hidden');
+                        }
+                    }
+
+                    if (hasContent) {
+                        section.classList.remove('hidden');
+                    }
+
+                    const addrContainer = document.getElementById('introAddressContainer');
+                    const addrEl = document.getElementById('introAddress');
+                    const mapContainer = document.getElementById('introMapContainer');
+                    const mapIframe = document.getElementById('introMapIframe');
+
+                    if (address) {
+                        addrEl.innerText = address;
+                        addrContainer.classList.remove('hidden');
+
+                        const encodedAddress = encodeURIComponent(address);
+                        mapIframe.src = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                        mapContainer.classList.remove('hidden');
+                    }
+
+                    const hoursContainer = document.getElementById('introHoursContainer');
+                    const hoursEl = document.getElementById('introHours');
+                    if (hours) {
+                        hoursEl.innerText = hours;
+                        hoursContainer.classList.remove('hidden');
+                    }
+
+                    const contactContainer = document.getElementById('introContactContainer');
+                    const contactLinkEl = document.getElementById('introContactLink');
+                    if (contact) {
+                        const cleanPhone = contact.replace(/\D/g, '');
+                        if (cleanPhone) {
+                            contactLinkEl.href = `https://id.zalo.me/${cleanPhone}`;
+                        }
+                        contactLinkEl.innerText = contact;
+                        contactContainer.classList.remove('hidden');
+                    }
+                }
+            } catch (error) {
+                console.error("Lỗi lấy dữ liệu giới thiệu:", error);
+            }
+        };
+
+        fetchIntroduce();
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.replace("login.html");
+        }
+    </script>
+    <title>Cấu hình Giới Thiệu - 3BichCoffee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Điều hướng Admin -->
+        <div class="mb-4 flex gap-2">
+            <a href="adminProduct.html"
+                class="px-4 py-2 bg-white text-gray-600 font-bold rounded-lg shadow-sm hover:bg-gray-50 border border-gray-200 transition text-sm flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+                Quay lại Quản lý Món
+            </a>
+            <div
+                class="px-4 py-2 bg-emerald-50 text-emerald-700 font-bold rounded-lg shadow-sm border border-emerald-200 text-sm flex items-center gap-2 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Đang ở: Cấu hình Giới Thiệu
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="flex flex-col justify-between mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="bg-emerald-500 p-3 rounded-lg text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Cấu hình Trang Giới Thiệu</h1>
+                    <p class="text-gray-500 text-sm">Cập nhật tiêu đề, mô tả, hình ảnh/video và địa chỉ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Configuration -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-emerald-500 p-5 text-white flex justify-between items-center">
+                <h3 class="text-xl font-bold">Nội dung Trang Giới Thiệu</h3>
+            </div>
+            <form id="introduceForm" class="p-8 space-y-5">
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tiêu đề (Title)</label>
+                    <input type="text" id="iTitle" placeholder="Hơn cả một thức uống..."
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-400 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mô tả (Description)</label>
+                    <textarea id="iDesc" placeholder="Được thành lập vào năm 2020..."
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-400 outline-none transition-all h-32 resize-none"></textarea>
+                    <p class="text-[10px] text-gray-400 mt-1">Xuống dòng sẽ được bảo lưu khi hiển thị.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Phương tiện (Link Hình ảnh hoặc
+                        Link Youtube)</label>
+                    <div class="flex gap-2 items-center">
+                        <input type="file" id="fileUpload" accept="image/*" class="hidden" onchange="uploadImage(this)">
+                        <button type="button" onclick="document.getElementById('fileUpload').click()"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-xl text-sm font-bold transition flex-shrink-0 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Tải ảnh lên mây
+                        </button>
+
+                        <input type="text" id="iMedia"
+                            placeholder="Hệ thống sẽ tự điền link ảnh, hoặc dán link Youtube vào đây..."
+                            class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-400 outline-none transition-all text-sm">
+                    </div>
+                    <p id="uploadStatus" class="text-xs mt-1 text-gray-400">Nếu là Youtube, dán trực tiếp link (VD:
+                        https://www.youtube.com/watch?v=...).</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Giờ mở cửa (Hours)</label>
+                    <input type="text" id="iHours" placeholder="Thứ 2 - Chủ nhật: 06:00 - 10:30"
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-400 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Liên Hệ (Phone/Zalo)</label>
+                    <input type="text" id="iContact" placeholder="0399.232.692"
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-400 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Địa chỉ (Address)</label>
+                    <textarea id="iAddress" placeholder="22 Nguyễn Huệ, Phước Dân..."
+                        class="w-full border-gray-200 border p-3 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-400 outline-none transition-all h-20 resize-none"></textarea>
+                    <p class="text-[10px] text-gray-400 mt-1">Bản đồ Google Maps sẽ tự động lấy theo địa chỉ này.</p>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button type="submit"
+                        class="px-10 py-3 bg-emerald-500 text-white rounded-xl font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-all transform active:scale-95">Lưu
+                        cấu hình</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { doc, setDoc, getDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { db } from "../firebaseConfig.js";
+
+        const docRef = doc(db, "settings", "introduce");
+
+        // --- 1. TẢI DỮ LIỆU BAN ĐẦU ---
+        const loadData = async () => {
+            try {
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    document.getElementById('iTitle').value = data.title || "";
+                    document.getElementById('iDesc').value = data.description || "";
+                    document.getElementById('iMedia').value = data.mediaLink || "";
+                    document.getElementById('iAddress').value = data.address || "";
+                    document.getElementById('iHours').value = data.hours || "";
+                    document.getElementById('iContact').value = data.contact || "";
+                }
+            } catch (error) {
+                alert("Lỗi tải cấu hình: " + error.message);
+            }
+        };
+
+        loadData();
+
+        // --- 2. LƯU DỮ LIỆU ---
+        document.getElementById('introduceForm').onsubmit = async (e) => {
+            e.preventDefault();
+
+            const currentUser = sessionStorage.getItem('loggedInName') || 'Admin';
+            const currentTime = new Date().toISOString();
+
+            const data = {
+                title: document.getElementById('iTitle').value.trim(),
+                description: document.getElementById('iDesc').value.trim(),
+                mediaLink: document.getElementById('iMedia').value.trim(),
+                address: document.getElementById('iAddress').value.trim(),
+                hours: document.getElementById('iHours').value.trim(),
+                contact: document.getElementById('iContact').value.trim(),
+                userUpdate: currentUser,
+                DateUpdate: currentTime
+            };
+
+            try {
+                await setDoc(docRef, data, { merge: true });
+                alert("Cập nhật thành công!");
+            } catch (err) {
+                alert("Lỗi lưu cấu hình: " + err.message);
+            }
+        };
+
+        // --- 3. UPLOAD ẢNH QUA IMGBB API ---
+        window.uploadImage = async (input) => {
+            const file = input.files[0];
+            if (!file) return;
+
+            const uploadStatus = document.getElementById('uploadStatus');
+            const iMediaInput = document.getElementById('iMedia');
+            const IMGBB_API_KEY = "ca80289226aaf6f4ef42d4fa5cfe231c"; // Key copy từ adminProduct
+
+            uploadStatus.innerText = "⏳ Đang tải ảnh lên đám mây...";
+            uploadStatus.className = "text-xs mt-1 text-emerald-500 font-bold";
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    iMediaInput.value = data.data.url;
+                    uploadStatus.innerText = "✅ Tải ảnh thành công! Đã có link tự động.";
+                    uploadStatus.className = "text-xs mt-1 text-green-500 font-bold";
+                } else {
+                    uploadStatus.innerText = "❌ Lỗi: " + data.error.message;
+                    uploadStatus.className = "text-xs mt-1 text-red-500 font-bold";
+                }
+            } catch (error) {
+                uploadStatus.innerText = "❌ Lỗi mạng, không thể kết nối tới ImgBB!";
+                uploadStatus.className = "text-xs mt-1 text-red-500 font-bold";
+            }
+        };
+
+        // --- 4. TỰ ĐỘNG ĐĂNG XUẤT NẾU KHÔNG HOẠT ĐỘNG (60p) ---
+        let inactivityTimeout;
+        const resetInactivityTimeout = () => {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                clearTimeout(inactivityTimeout);
+                inactivityTimeout = setTimeout(async () => {
+                    const loggedInName = sessionStorage.getItem('loggedInName') || 'Unknown';
+                    try {
+                        await addDoc(collection(db, "SessionLogin"), {
+                            userName: loggedInName,
+                            action: "logout (timeout)",
+                            timestamp: new Date().toISOString()
+                        });
+                    } catch (err) {
+                        console.error("Lỗi ghi log timeout:", err);
+                    }
+                    sessionStorage.removeItem('isLoggedIn');
+                    sessionStorage.removeItem('loggedInName');
+                    alert("Phiên đăng nhập đã hết hạn do không có thao tác trong 60 phút.");
+                    window.location.replace("login.html");
+                }, 3600000); // 60p
+            }
+        };
+
+        ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll'].forEach(evt => {
+            document.addEventListener(evt, resetInactivityTimeout);
+        });
+
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            resetInactivityTimeout();
+        }
+    </script>
+</body>
+
+</html>
