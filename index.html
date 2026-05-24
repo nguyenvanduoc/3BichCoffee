@@ -230,7 +230,7 @@
                 <p class="text-sm" id="footer-desc">Bắt nguồn từ tình yêu với hạt cà phê Việt Nam và mong muốn gói ghém
                     trọn vẹn sự thanh
                     bình, thảnh thơi của một buổi sáng vùng quê vào từng tách cà phê ấm nóng.<br />Liên hệ :
-                    0399.232.692 Zalo / Phone.</p>
+                    093.770.2383 Zalo / Phone.</p>
             </div>
             <div>
                 <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Đường Dẫn</h4>
@@ -255,7 +255,7 @@
                         </div>
                         <span class="font-medium">Facebook</span>
                     </a>
-                    <a href="https://id.zalo.me/0399232692" target="_blank" id="footer-zalo"
+                    <a href="https://id.zalo.me/0937702383" target="_blank" id="footer-zalo"
                         class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
                         <div
                             class="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center group-hover:bg-blue-500 transition-colors mr-3">
@@ -286,11 +286,11 @@
             </div>
             <p class="text-coffee-600 mb-6 text-center">Bạn muốn liên hệ qua hình thức nào?</p>
             <div class="flex flex-col space-y-4">
-                <a href="https://id.zalo.me/0399232692" target="_blank" onclick="closeOrderModal()"
+                <a href="https://id.zalo.me/0937702383" target="_blank" onclick="closeOrderModal()"
                     class="flex items-center justify-center w-full bg-[#0068ff] hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-colors no-underline">
                     <span class="font-bold text-lg mr-2">Zalo</span> Nhắn tin Zalo
                 </a>
-                <a href="tel:0399232692" onclick="closeOrderModal()"
+                <a href="tel:0937702383" onclick="closeOrderModal()"
                     class="flex items-center justify-center w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-colors no-underline">
                     <i class="fa-solid fa-phone mr-2"></i> Gọi điện thoại
                 </a>
@@ -301,11 +301,13 @@
     <!-- AI Chatbot Widget -->
     <div id="chatbot-widget" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end">
         <!-- Chat Window -->
-        <div id="chatbot-window" class="hidden bg-white w-[90vw] sm:w-96 rounded-2xl shadow-2xl border border-coffee-100 overflow-hidden mb-4 flex-col">
+        <div id="chatbot-window"
+            class="hidden bg-white w-[90vw] sm:w-96 rounded-2xl shadow-2xl border border-coffee-100 overflow-hidden mb-4 flex-col">
             <!-- Header -->
             <div class="bg-coffee-600 text-white p-4 flex justify-between items-center">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3 text-coffee-600 shadow-inner">
+                    <div
+                        class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3 text-coffee-600 shadow-inner">
                         <i class="fa-solid fa-robot text-xl"></i>
                     </div>
                     <div>
@@ -313,41 +315,49 @@
                         <p class="text-xs text-coffee-200">Luôn sẵn sàng hỗ trợ</p>
                     </div>
                 </div>
-                <button onclick="toggleChatbot()" class="text-coffee-100 hover:text-white transition-colors focus:outline-none">
+                <button onclick="toggleChatbot()"
+                    class="text-coffee-100 hover:text-white transition-colors focus:outline-none">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
-            
+
             <!-- Messages -->
-            <div id="chatbot-messages" class="p-4 h-80 overflow-y-auto flex flex-col space-y-3 bg-coffee-50 scroll-smooth">
+            <div id="chatbot-messages"
+                class="p-4 h-80 overflow-y-auto flex flex-col space-y-3 bg-coffee-50 scroll-smooth">
                 <!-- Welcome Message -->
                 <div class="flex items-start">
-                    <div class="w-8 h-8 rounded-full bg-coffee-600 text-white flex items-center justify-center mr-2 flex-shrink-0">
+                    <div
+                        class="w-8 h-8 rounded-full bg-coffee-600 text-white flex items-center justify-center mr-2 flex-shrink-0">
                         <i class="fa-solid fa-robot text-xs"></i>
                     </div>
                     <div class="bg-white text-coffee-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-sm">
-                        Chào bạn! Mình là trợ lý AI của 3BichCoffee. Bạn cần hỗ trợ thông tin gì về thực đơn, hay địa chỉ quán ạ?
+                        Chào bạn! Mình là trợ lý AI của 3BichCoffee. Bạn cần hỗ trợ thông tin gì về thực đơn, hay địa
+                        chỉ quán ạ?
                     </div>
                 </div>
             </div>
-            
+
             <!-- Input -->
             <div class="p-3 bg-white border-t border-coffee-100 flex items-center">
-                <input type="text" id="chatbot-input" placeholder="Nhập tin nhắn..." 
+                <input type="text" id="chatbot-input" placeholder="Nhập tin nhắn..."
                     class="flex-1 bg-coffee-50 text-coffee-800 text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-coffee-500 transition-shadow mr-2"
                     onkeypress="if(event.key === 'Enter') sendChatMessage()">
-                <button onclick="sendChatMessage()" class="w-10 h-10 bg-coffee-600 hover:bg-coffee-500 text-white rounded-full flex items-center justify-center transition-colors focus:outline-none shadow-md flex-shrink-0">
+                <button onclick="sendChatMessage()"
+                    class="w-10 h-10 bg-coffee-600 hover:bg-coffee-500 text-white rounded-full flex items-center justify-center transition-colors focus:outline-none shadow-md flex-shrink-0">
                     <i class="fa-solid fa-paper-plane text-sm"></i>
                 </button>
             </div>
         </div>
-        
+
         <!-- Toggle Button -->
-        <button onclick="toggleChatbot()" id="chatbot-toggle-btn" class="w-14 h-14 bg-coffee-600 hover:bg-coffee-500 text-white rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none relative">
+        <button onclick="toggleChatbot()" id="chatbot-toggle-btn"
+            class="w-14 h-14 bg-coffee-600 hover:bg-coffee-500 text-white rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 focus:outline-none relative">
             <i class="fa-solid fa-comments text-2xl absolute transition-all duration-300" id="chatbot-icon-msg"></i>
-            <i class="fa-solid fa-xmark text-2xl absolute opacity-0 scale-50 transition-all duration-300" id="chatbot-icon-close"></i>
+            <i class="fa-solid fa-xmark text-2xl absolute opacity-0 scale-50 transition-all duration-300"
+                id="chatbot-icon-close"></i>
             <!-- Notification Badge -->
-            <span id="chatbot-badge" class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>
+            <span id="chatbot-badge"
+                class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>
         </button>
     </div>
 

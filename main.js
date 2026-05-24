@@ -321,7 +321,7 @@ function appendMessage(text, sender) {
 
 function botReply(userMsg) {
     const lowerMsg = userMsg.toLowerCase();
-    let reply = "Xin lỗi, mình là Trợ lý AI đang trong giai đoạn học hỏi nên chưa hiểu rõ ý bạn. Bạn có thể liên hệ Zalo 0399.232.692 để được hỗ trợ tốt nhất nhé!";
+    let reply = "Xin lỗi, mình là Trợ lý AI đang trong giai đoạn học hỏi nên chưa hiểu rõ ý bạn. Bạn có thể liên hệ Zalo 093.770.2383 để được hỗ trợ tốt nhất nhé!";
 
     if (lowerMsg.includes("chào") || lowerMsg.includes("hi") || lowerMsg.includes("hello")) {
         reply = "Chào bạn! Mình có thể giúp gì cho bạn hôm nay?";
@@ -332,7 +332,7 @@ function botReply(userMsg) {
     } else if (lowerMsg.includes("địa chỉ") || lowerMsg.includes("ở đâu") || lowerMsg.includes("quán")) {
         reply = "Quán hiện đang giao hàng tận nơi tại khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?";
     } else if (lowerMsg.includes("liên hệ") || lowerMsg.includes("sđt") || lowerMsg.includes("số điện thoại") || lowerMsg.includes("zalo")) {
-        reply = "Bạn có thể liên hệ trực tiếp qua số điện thoại hoặc Zalo: <b>0399.232.692</b> nha!";
+        reply = "Bạn có thể liên hệ trực tiếp qua số điện thoại hoặc Zalo: <b>093.770.2383</b> nha!";
     }
 
     appendMessage(reply, 'bot');
