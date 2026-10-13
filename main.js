@@ -424,10 +424,12 @@ function noiDungDon() {
     const { qty, tien } = tongGio();
     const lines = dongGio().map(d => `- ${d.coffee.name} x${d.qty} = ${window.formatVND(d.qty * giaBan(d.coffee))}`);
     const note = (document.getElementById('cart-note')?.value || '').trim();
+    const sdtKhach = (document.getElementById('cart-phone')?.value || '').trim();
     return [
         'Đơn hàng 3BichCoffee',
         ...lines,
         `Tổng: ${qty} ly - ${window.formatVND(tien)}${qty >= SO_LY_FREESHIP ? ' (Freeship)' : ''}`,
+        sdtKhach ? `SĐT khách: ${sdtKhach}` : '',
         note ? `Ghi chú: ${note}` : ''
     ].filter(Boolean).join('\n');
 }
@@ -499,6 +501,8 @@ function veGioHang() {
     document.getElementById('cart-sms').href = `sms:${window.shopPhone}?&body=${encodeURIComponent(noiDungDon())}`;
 }
 
+document.getElementById('cart-sms')?.addEventListener('click', (e) => { if (!kiemTraSdt()) e.preventDefault(); });
+
 window.moGioHang = function () {
     veGioHang();
     document.getElementById('cart-drawer').classList.remove('hidden');
@@ -510,10 +514,26 @@ window.dongGioHang = function () {
     document.body.classList.remove('overflow-hidden');
 };
 
-// Ghi chú thay đổi -> cập nhật nội dung SMS
-document.getElementById('cart-note')?.addEventListener('input', () => {
+// Ghi chú / SĐT thay đổi -> cập nhật nội dung SMS; nhớ SĐT khách cho lần sau
+const SDT_KEY = '3bich_sdt_khach';
+const oSdt = document.getElementById('cart-phone');
+try { if (oSdt) oSdt.value = localStorage.getItem(SDT_KEY) || ''; } catch (e) { /* bỏ qua */ }
+['cart-note', 'cart-phone'].forEach(id => document.getElementById(id)?.addEventListener('input', () => {
     document.getElementById('cart-sms').href = `sms:${window.shopPhone}?&body=${encodeURIComponent(noiDungDon())}`;
-});
+    if (id === 'cart-phone') {
+        document.getElementById('cart-phone-err').classList.add('hidden');
+        try { localStorage.setItem(SDT_KEY, oSdt.value.trim()); } catch (e) { /* bỏ qua */ }
+    }
+}));
+
+// Bắt buộc nhập SĐT hợp lệ (9-11 số) trước khi gửi đơn
+function kiemTraSdt() {
+    const so = (oSdt?.value || '').replace(/\D/g, '');
+    const ok = so.length >= 9 && so.length <= 11;
+    document.getElementById('cart-phone-err').classList.toggle('hidden', ok);
+    if (!ok) oSdt?.focus();
+    return ok;
+}
 
 // Zalo không cho điền sẵn tin nhắn: sao chép đơn rồi mở Zalo để khách dán vào
 function saoChep(text) {
@@ -536,11 +556,25 @@ function saoChep(text) {
 }
 
 window.datQuaZalo = function () {
+    if (!kiemTraSdt()) return;
     const text = noiDungDon();
     const daChep = saoChep(text);
-    alert(daChep
-        ? 'Đã sao chép đơn hàng. Khi Zalo mở ra, bạn chỉ cần DÁN vào ô chat và gửi cho quán nhé!'
-        : 'Bạn vui lòng gửi nội dung đơn sau qua Zalo:\n\n' + text);
+    document.getElementById('zalo-modal-title').textContent = daChep ? 'Đã sao chép đơn hàng' : 'Sao chép đơn hàng để gửi';
+    document.getElementById('zalo-modal-text').textContent = text;
+    const modal = document.getElementById('zalo-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+};
+
+window.dongHopZalo = function () {
+    const modal = document.getElementById('zalo-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+};
+
+window.moZalo = function () {
+    saoChep(noiDungDon()); // chép lại lần nữa cho chắc
+    dongHopZalo();
     window.location.href = `https://zalo.me/${window.shopPhone}`;
 };
 
