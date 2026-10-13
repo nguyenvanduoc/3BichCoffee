@@ -52,6 +52,8 @@ onSnapshot(doc(db, "settings", "introduce"), (docSnap) => {
         if (contact) {
             const cleanPhone = contact.replace(/\D/g, '');
             if (cleanPhone) {
+                window.shopPhone = cleanPhone;
+                capNhatGioUI();
                 if (footerZalo) footerZalo.href = `https://zalo.me/${cleanPhone}`;
                 if (modalZalo) modalZalo.href = `https://zalo.me/${cleanPhone}`;
                 if (modalPhone) modalPhone.href = `tel:${cleanPhone}`;
@@ -86,7 +88,7 @@ window.taoTheSanPham = function (coffee) {
             </div>
             <h3 class="mt-3 text-base sm:text-lg font-bold text-coffee-900 leading-snug line-clamp-2 min-h-[2.75rem] sm:min-h-[3.5rem]">${coffee.name}</h3>
             <div class="mt-1">${khoiGia(coffee)}</div>
-            <button class="mt-2 w-full py-2 rounded-xl bg-accent-50 text-accent-600 group-hover:bg-accent-500 group-hover:text-white font-bold text-sm uppercase tracking-wide transition-colors">Chọn</button>
+            <button data-cart-chon="${coffee.id}" onclick="event.stopPropagation(); themVaoGio('${coffee.id}')" class="mt-2 w-full py-2 rounded-xl bg-accent-50 text-accent-600 hover:bg-accent-500 hover:text-white font-bold text-sm uppercase tracking-wide transition-colors">${nhanNutChon(coffee.id)}</button>
         </div>
     `;
 };
@@ -103,9 +105,7 @@ function taoDongMenu(coffee) {
                 ${coffee.desc ? `<p class="hidden sm:block text-xs text-coffee-400 mt-1 line-clamp-2">${coffee.desc}</p>` : ''}
                 <div class="mt-auto pt-2 flex items-end justify-between gap-2">
                     <div class="leading-tight">${khoiGia(coffee)}</div>
-                    <span class="shrink-0 w-8 h-8 rounded-full bg-accent-500 group-hover:bg-accent-600 text-white flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-plus text-sm"></i>
-                    </span>
+                    <div class="shrink-0" data-cart-ctrl="${coffee.id}" onclick="event.stopPropagation()">${dieuKhienSoLuong(coffee.id)}</div>
                 </div>
             </div>
         </div>
@@ -222,6 +222,7 @@ window.renderSanPhams = function () {
             : `<p class="text-coffee-500 italic">Hiện chưa có món nổi bật nào.</p>`;
     }
     window.renderMenu();
+    capNhatGioUI();
 
     if (choCuonToiMenu && window.coffeesData.length > 0) {
         choCuonToiMenu = false;
@@ -233,6 +234,7 @@ window.renderSanPhams = function () {
 window.xemChiTiet = function (coffeeId, addToHistory = true) {
     const coffee = window.coffeesData.find(c => c.id === coffeeId);
     if (!coffee) return;
+    window.currentProductId = coffeeId;
 
     document.getElementById('detail-img').src = coffee.image;
     document.getElementById('detail-category').textContent = coffee.category;
@@ -333,6 +335,213 @@ if (initialId) {
     window.navigate('index', false);
     history.replaceState({ view: 'index' }, '', window.location.pathname);
 }
+
+// --- GIỎ HÀNG ---
+const GIO_KEY = '3bich_gio_hang';
+const SO_LY_FREESHIP = 3;
+window.shopPhone = '0937702383';
+
+let gioHang = {};
+try { gioHang = JSON.parse(localStorage.getItem(GIO_KEY)) || {}; } catch (e) { gioHang = {}; }
+
+function luuGio() {
+    try { localStorage.setItem(GIO_KEY, JSON.stringify(gioHang)); } catch (e) { /* bỏ qua */ }
+}
+
+const giaBan = (c) => Number(c.discountPrice || c.price) || 0;
+
+// Danh sách món trong giỏ (bỏ món đã bị xoá khỏi menu)
+function dongGio() {
+    return Object.entries(gioHang)
+        .map(([id, qty]) => ({ coffee: window.coffeesData.find(c => c.id === id), qty }))
+        .filter(d => d.coffee && d.qty > 0);
+}
+
+function tongGio() {
+    return dongGio().reduce((t, d) => ({ qty: t.qty + d.qty, tien: t.tien + d.qty * giaBan(d.coffee) }), { qty: 0, tien: 0 });
+}
+
+function dieuKhienSoLuong(id) {
+    const qty = gioHang[id] || 0;
+    if (!qty) {
+        return `<button onclick="themVaoGio('${id}')" aria-label="Thêm vào giỏ" class="w-8 h-8 rounded-full bg-accent-500 hover:bg-accent-600 text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-plus text-sm"></i></button>`;
+    }
+    return `<div class="flex items-center gap-2 bg-accent-50 rounded-full p-0.5">
+        <button onclick="giamGio('${id}')" aria-label="Bớt" class="w-7 h-7 rounded-full bg-white text-accent-600 border border-accent-500/40 flex items-center justify-center"><i class="fa-solid fa-minus text-xs"></i></button>
+        <span class="min-w-[1rem] text-center font-bold text-coffee-900 text-sm">${qty}</span>
+        <button onclick="themVaoGio('${id}')" aria-label="Thêm" class="w-7 h-7 rounded-full bg-accent-500 text-white flex items-center justify-center"><i class="fa-solid fa-plus text-xs"></i></button>
+    </div>`;
+}
+
+function nhanNutChon(id) {
+    const qty = gioHang[id] || 0;
+    return qty ? `Đã chọn · ${qty}` : 'Chọn';
+}
+
+window.themVaoGio = function (id, imLang = false) {
+    const coffee = window.coffeesData.find(c => c.id === id);
+    if (!coffee) return;
+    gioHang[id] = (gioHang[id] || 0) + 1;
+    luuGio();
+    capNhatGioUI();
+    if (!imLang) hienThongBao(`Đã thêm ${coffee.name} vào giỏ`);
+};
+
+window.giamGio = function (id) {
+    if (!gioHang[id]) return;
+    gioHang[id] -= 1;
+    if (gioHang[id] <= 0) delete gioHang[id];
+    luuGio();
+    capNhatGioUI();
+};
+
+window.xoaKhoiGio = function (id) {
+    delete gioHang[id];
+    luuGio();
+    capNhatGioUI();
+};
+
+window.xoaGioHang = function () {
+    if (!confirm('Xóa tất cả món trong giỏ hàng?')) return;
+    gioHang = {};
+    luuGio();
+    capNhatGioUI();
+};
+
+let thoiGianThongBao;
+function hienThongBao(text) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = text;
+    el.classList.remove('hidden');
+    clearTimeout(thoiGianThongBao);
+    thoiGianThongBao = setTimeout(() => el.classList.add('hidden'), 2200);
+}
+
+// Nội dung đơn hàng gửi qua Zalo / SMS
+function noiDungDon() {
+    const { qty, tien } = tongGio();
+    const lines = dongGio().map(d => `- ${d.coffee.name} x${d.qty} = ${window.formatVND(d.qty * giaBan(d.coffee))}`);
+    const note = (document.getElementById('cart-note')?.value || '').trim();
+    return [
+        'Đơn hàng 3BichCoffee',
+        ...lines,
+        `Tổng: ${qty} ly - ${window.formatVND(tien)}${qty >= SO_LY_FREESHIP ? ' (Freeship)' : ''}`,
+        note ? `Ghi chú: ${note}` : ''
+    ].filter(Boolean).join('\n');
+}
+
+function capNhatGioUI() {
+    // Bộ điều khiển số lượng trong thực đơn và nút CHỌN
+    document.querySelectorAll('[data-cart-ctrl]').forEach(el => { el.innerHTML = dieuKhienSoLuong(el.dataset.cartCtrl); });
+    document.querySelectorAll('[data-cart-chon]').forEach(el => { el.textContent = nhanNutChon(el.dataset.cartChon); });
+
+    const { qty, tien } = tongGio();
+    document.querySelectorAll('.cart-count').forEach(el => {
+        el.textContent = qty;
+        el.classList.toggle('hidden', qty === 0);
+    });
+
+    const bar = document.getElementById('cart-bar');
+    if (bar) {
+        bar.classList.toggle('hidden', qty === 0);
+        bar.classList.toggle('flex', qty > 0);
+        document.getElementById('cart-bar-total').textContent = `${qty} món · ${window.formatVND(tien)}`;
+    }
+    document.body.classList.toggle('has-cart', qty > 0);
+
+    veGioHang();
+}
+
+function veGioHang() {
+    const list = document.getElementById('cart-items');
+    if (!list) return;
+    const rows = dongGio();
+    const { qty, tien } = tongGio();
+
+    list.innerHTML = rows.length ? rows.map(({ coffee, qty }) => `
+        <div class="flex gap-3 py-3">
+            <img src="${coffee.image}" alt="" class="w-14 h-[4.5rem] rounded-lg object-cover bg-coffee-100 shrink-0" onerror="this.src='https://placehold.co/300x400?text=3Bich'">
+            <div class="flex-1 min-w-0 flex flex-col">
+                <div class="flex justify-between gap-2">
+                    <span class="font-bold text-coffee-900 leading-snug line-clamp-2">${coffee.name}</span>
+                    <button onclick="xoaKhoiGio('${coffee.id}')" class="text-gray-300 hover:text-red-500 shrink-0" aria-label="Xóa"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                </div>
+                <span class="text-xs text-coffee-400">${window.formatVND(giaBan(coffee))} / ly</span>
+                <div class="mt-auto pt-1 flex items-center justify-between">
+                    ${dieuKhienSoLuong(coffee.id)}
+                    <span class="font-bold text-coffee-900">${window.formatVND(qty * giaBan(coffee))}</span>
+                </div>
+            </div>
+        </div>`).join('')
+        : `<div class="py-10 text-center text-coffee-400">
+            <i class="fa-solid fa-bag-shopping text-4xl mb-3 opacity-50"></i>
+            <p class="font-semibold">Giỏ hàng đang trống</p>
+            <button onclick="dongGioHang(); navigate('list')" class="mt-4 text-accent-600 font-bold">Xem thực đơn <i class="fa-solid fa-chevron-right text-xs"></i></button>
+        </div>`;
+
+    document.getElementById('cart-footer').classList.toggle('hidden', rows.length === 0);
+    document.getElementById('cart-total').textContent = window.formatVND(tien);
+    document.getElementById('cart-qty').textContent = `(${qty} ly)`;
+
+    const ship = document.getElementById('cart-ship');
+    if (qty >= SO_LY_FREESHIP) {
+        ship.innerHTML = '<i class="fa-solid fa-motorcycle mr-1"></i> Đơn của bạn được FREESHIP';
+        ship.className = 'text-sm font-semibold rounded-xl px-3 py-2 bg-green-50 text-green-700';
+    } else {
+        ship.innerHTML = `<i class="fa-solid fa-motorcycle mr-1"></i> Thêm ${SO_LY_FREESHIP - qty} ly nữa để được FREESHIP`;
+        ship.className = 'text-sm font-semibold rounded-xl px-3 py-2 bg-accent-50 text-accent-600';
+    }
+
+    document.getElementById('cart-call').href = `tel:${window.shopPhone}`;
+    // iOS dùng "&body=", Android dùng "?body="; "?&body=" chạy được trên cả hai
+    document.getElementById('cart-sms').href = `sms:${window.shopPhone}?&body=${encodeURIComponent(noiDungDon())}`;
+}
+
+window.moGioHang = function () {
+    veGioHang();
+    document.getElementById('cart-drawer').classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+};
+
+window.dongGioHang = function () {
+    document.getElementById('cart-drawer').classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+};
+
+// Ghi chú thay đổi -> cập nhật nội dung SMS
+document.getElementById('cart-note')?.addEventListener('input', () => {
+    document.getElementById('cart-sms').href = `sms:${window.shopPhone}?&body=${encodeURIComponent(noiDungDon())}`;
+});
+
+// Zalo không cho điền sẵn tin nhắn: sao chép đơn rồi mở Zalo để khách dán vào
+function saoChep(text) {
+    let ok = false;
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select(); ta.setSelectionRange(0, text.length);
+        ok = document.execCommand('copy');
+        ta.remove();
+    } catch (e) { ok = false; }
+    if (!ok && navigator.clipboard) {
+        navigator.clipboard.writeText(text).catch(() => { });
+        ok = true;
+    }
+    return ok;
+}
+
+window.datQuaZalo = function () {
+    const text = noiDungDon();
+    const daChep = saoChep(text);
+    alert(daChep
+        ? 'Đã sao chép đơn hàng. Khi Zalo mở ra, bạn chỉ cần DÁN vào ô chat và gửi cho quán nhé!'
+        : 'Bạn vui lòng gửi nội dung đơn sau qua Zalo:\n\n' + text);
+    window.location.href = `https://zalo.me/${window.shopPhone}`;
+};
 
 // --- CHATBOT WIDGET LOGIC ---
 let isChatbotOpen = false;
