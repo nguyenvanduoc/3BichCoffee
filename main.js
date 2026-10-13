@@ -84,7 +84,7 @@ window.taoTheSanPham = function (coffee) {
                 <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="${ANH_LOI}">
                 ${badgeSale}
             </div>
-            <h3 class="mt-3 text-sm sm:text-base font-semibold text-coffee-900 leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">${coffee.name}</h3>
+            <h3 class="mt-3 text-base sm:text-lg font-bold text-coffee-900 leading-snug line-clamp-2 min-h-[2.75rem] sm:min-h-[3.5rem]">${coffee.name}</h3>
             <div class="mt-1">${khoiGia(coffee)}</div>
             <button class="mt-2 w-full py-2 rounded-xl bg-accent-50 text-accent-600 group-hover:bg-accent-500 group-hover:text-white font-bold text-sm uppercase tracking-wide transition-colors">Chọn</button>
         </div>
@@ -99,7 +99,7 @@ function taoDongMenu(coffee) {
                 <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-cover" onerror="${ANH_LOI}">
             </div>
             <div class="flex-1 min-w-0 flex flex-col py-1">
-                <h4 class="font-semibold text-coffee-900 text-sm sm:text-base leading-snug line-clamp-2">${coffee.name}</h4>
+                <h4 class="font-bold text-coffee-900 text-base sm:text-lg leading-snug line-clamp-2">${coffee.name}</h4>
                 ${coffee.desc ? `<p class="hidden sm:block text-xs text-coffee-400 mt-1 line-clamp-2">${coffee.desc}</p>` : ''}
                 <div class="mt-auto pt-2 flex items-end justify-between gap-2">
                     <div class="leading-tight">${khoiGia(coffee)}</div>
