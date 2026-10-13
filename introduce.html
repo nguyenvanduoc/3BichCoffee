@@ -159,12 +159,7 @@
                 </div>
 
                 <!-- Google Maps Embed -->
-                <div id="introMapContainer"
-                    class="mt-12 rounded-2xl overflow-hidden shadow-sm border border-coffee-100 h-[450px] hidden">
-                    <iframe id="introMapIframe" width="100%" height="100%" frameborder="0" scrolling="no"
-                        marginheight="0" marginwidth="0" src="">
-                    </iframe>
-                </div>
+                <div id="introMapContainer" class="mt-12 grid grid-cols-1 gap-6 hidden"></div>
             </div>
         </section>
     </main>
@@ -181,6 +176,8 @@
                 <p class="text-sm">Bắt nguồn từ tình yêu với hạt cà phê Việt Nam và mong muốn gói ghém trọn vẹn sự thanh
                     bình, thảnh thơi của một buổi sáng vùng quê vào từng tách cà phê ấm nóng.
                     </br>
+                    Quầy 1: 22 Nguyễn Huệ, Phước Dân, Ninh Phước, Ninh Thuận</br>
+                    Quầy 2: 149 Trường Chinh, Phước Dân, Ninh Phước, Ninh Thuận</br>
                     Liên hệ : 093.770.2383 Zalo / Phone
                 </p>
             </div>
@@ -295,14 +292,24 @@
                     const addrContainer = document.getElementById('introAddressContainer');
                     const addrEl = document.getElementById('introAddress');
                     const mapContainer = document.getElementById('introMapContainer');
-                    const mapIframe = document.getElementById('introMapIframe');
 
-                    if (address) {
-                        addrEl.innerText = address;
+                    // Mỗi dòng là một quầy; mỗi quầy có một bản đồ riêng
+                    const addrList = address.split('\n').map(a => a.trim()).filter(Boolean);
+                    if (addrList.length) {
+                        addrEl.innerText = addrList.map((a, i) => addrList.length > 1 ? `Quầy ${i + 1}: ${a}` : a).join('\n');
                         addrContainer.classList.remove('hidden');
 
-                        const encodedAddress = encodeURIComponent(address);
-                        mapIframe.src = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                        const esc = (t) => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+                        mapContainer.innerHTML = addrList.map((a, i) => `
+                            <div class="rounded-2xl overflow-hidden shadow-sm border border-coffee-100 bg-white">
+                                <div class="px-5 py-3 flex items-start gap-2 text-coffee-800 font-semibold">
+                                    <i class="fa-solid fa-location-dot mt-1 text-coffee-500"></i>
+                                    <span>${addrList.length > 1 ? `Quầy ${i + 1}: ` : ''}${esc(a)}</span>
+                                </div>
+                                <iframe class="w-full h-[320px] md:h-[400px]" frameborder="0" scrolling="no" loading="lazy"
+                                    src="https://maps.google.com/maps?q=${encodeURIComponent(a)}&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
+                            </div>`).join('');
+                        if (addrList.length > 1) mapContainer.classList.add('md:grid-cols-2');
                         mapContainer.classList.remove('hidden');
                     }
 

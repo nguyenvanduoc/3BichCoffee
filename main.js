@@ -37,6 +37,8 @@ onSnapshot(doc(db, "settings", "introduce"), (docSnap) => {
         const data = docSnap.data();
         const desc = data.description || "";
         const contact = data.contact || "";
+        window.shopAddresses = (data.address || "").split('\n').map(a => a.trim()).filter(Boolean);
+        const addressHtml = window.shopAddresses.map((a, i) => `${window.shopAddresses.length > 1 ? `Quầy ${i + 1}` : 'Địa chỉ'}: ${a}<br/>`).join('');
 
         const footerDesc = document.getElementById('footer-desc');
         const footerZalo = document.getElementById('footer-zalo');
@@ -44,7 +46,7 @@ onSnapshot(doc(db, "settings", "introduce"), (docSnap) => {
         const modalPhone = document.getElementById('modal-phone');
 
         if (footerDesc && desc) {
-            footerDesc.innerHTML = `${desc.replace(/\n/g, '<br/>')}<br/><br/>Liên hệ: ${contact || ''}`;
+            footerDesc.innerHTML = `${desc.replace(/\n/g, '<br/>')}<br/><br/>${addressHtml}Liên hệ: ${contact || ''}`;
         }
 
         if (contact) {
@@ -413,7 +415,10 @@ function botReply(userMsg) {
     } else if (lowerMsg.includes("menu") || lowerMsg.includes("thực đơn") || lowerMsg.includes("có món gì")) {
         reply = "Bên mình chuyên cà phê mộc, cà phê sữa, trà sữa, trà trái cây và nhiều món khác. Bạn có thể nhấn vào mục Thực Đơn để xem chi tiết nhé!";
     } else if (lowerMsg.includes("địa chỉ") || lowerMsg.includes("ở đâu") || lowerMsg.includes("quán")) {
-        reply = "Quán hiện đang giao hàng tận nơi tại khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?";
+        const addrs = window.shopAddresses || [];
+        reply = addrs.length
+            ? `Địa chỉ quán: <br/>${addrs.map((a, i) => `• ${addrs.length > 1 ? `Quầy ${i + 1}: ` : ''}<b>${a}</b>`).join('<br/>')}<br/>Bên mình cũng giao hàng tận nơi khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?`
+            : "Quán hiện đang giao hàng tận nơi tại khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?";
     } else if (lowerMsg.includes("liên hệ") || lowerMsg.includes("sđt") || lowerMsg.includes("số điện thoại") || lowerMsg.includes("zalo")) {
         reply = "Bạn có thể liên hệ trực tiếp qua số điện thoại hoặc Zalo: <b>093.770.2383</b> nha!";
     }
