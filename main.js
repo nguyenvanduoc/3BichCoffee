@@ -408,7 +408,9 @@ function botReply(userMsg) {
     const lowerMsg = userMsg.toLowerCase();
     let reply = "Xin lỗi, mình là Trợ lý AI đang trong giai đoạn học hỏi nên chưa hiểu rõ ý bạn. Bạn có thể liên hệ Zalo 093.770.2383 để được hỗ trợ tốt nhất nhé!";
 
-    if (lowerMsg.includes("chào") || lowerMsg.includes("hi") || lowerMsg.includes("hello")) {
+    if (lowerMsg.includes("ship") || lowerMsg.includes("giao") || lowerMsg.includes("vận chuyển")) {
+        reply = "Bên mình <b>FREESHIP cho đơn từ 3 ly</b>, giao tận nơi khu vực Ninh Phước, Ninh Thuận. Bạn nhắn Zalo hoặc gọi <b>093.770.2383</b> để đặt nhé!";
+    } else if (lowerMsg.includes("chào") || lowerMsg.includes("hi") || lowerMsg.includes("hello")) {
         reply = "Chào bạn! Mình có thể giúp gì cho bạn hôm nay?";
     } else if (lowerMsg.includes("giá") || lowerMsg.includes("bao nhiêu")) {
         reply = "Giá các món bên mình dao động từ 15k đến 50k tùy loại. Bạn có thể vào mục <b>Thực Đơn</b> để xem chi tiết nhé!";

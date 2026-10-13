@@ -148,6 +148,24 @@
                 </div>
             </section>
 
+            <!-- Ưu đãi: Freeship -->
+            <section class="pt-8 sm:pt-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <button onclick="openOrderModal()"
+                        class="w-full flex items-center gap-3 sm:gap-5 bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-2xl p-4 sm:p-6 shadow-md text-left">
+                        <span class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-motorcycle text-xl sm:text-3xl"></i>
+                        </span>
+                        <span class="flex-1 min-w-0">
+                            <span class="block text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-white/80">Ưu đãi</span>
+                            <span class="block text-lg sm:text-3xl font-bold leading-tight">FREESHIP từ 3 ly</span>
+                            <span class="block text-xs sm:text-base text-white/90">Giao tận nơi khu vực Ninh Phước</span>
+                        </span>
+                        <span class="shrink-0 bg-white text-accent-600 font-bold text-xs sm:text-sm uppercase px-3 sm:px-5 py-2 rounded-full">Đặt ngay</span>
+                    </button>
+                </div>
+            </section>
+
             <!-- Món Nổi Bật: hàng vuốt ngang -->
             <section class="pt-10 sm:pt-14">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -198,7 +216,9 @@
                                 id="detail-category">Cà Phê</div>
                             <h2 id="detail-title" class="text-3xl md:text-4xl font-bold text-coffee-900 mb-4">Đang
                                 tải...</h2>
-                            <p id="detail-price" class="text-2xl font-bold text-coffee-600 mb-6">0đ</p>
+                            <p id="detail-price" class="text-2xl font-bold text-coffee-600 mb-3">0đ</p>
+                            <p class="inline-flex self-start items-center gap-2 bg-accent-50 text-accent-600 text-sm font-bold px-3 py-1.5 rounded-full mb-6">
+                                <i class="fa-solid fa-motorcycle"></i> Freeship cho đơn từ 3 ly</p>
                             <p id="detail-desc" class="text-coffee-700 mb-8 leading-relaxed"></p>
 
                             <div class="mb-8" id="ingredients-section">
@@ -301,7 +321,9 @@
                 <button onclick="closeOrderModal()" class="text-coffee-400 hover:text-coffee-600 focus:outline-none"><i
                         class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
-            <p class="text-coffee-600 mb-6 text-center">Bạn muốn liên hệ qua hình thức nào?</p>
+            <p class="text-coffee-600 mb-3 text-center">Bạn muốn liên hệ qua hình thức nào?</p>
+            <p class="flex items-center justify-center gap-2 bg-accent-50 text-accent-600 text-sm font-bold px-3 py-2 rounded-xl mb-6">
+                <i class="fa-solid fa-motorcycle"></i> Freeship cho đơn từ 3 ly</p>
             <div class="flex flex-col space-y-4">
                 <a href="https://id.zalo.me/0937702383" target="_blank" onclick="closeOrderModal()"
                     class="flex items-center justify-center w-full bg-[#0068ff] hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-colors no-underline">
