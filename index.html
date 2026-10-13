@@ -357,6 +357,11 @@
             <div id="cart-items" class="flex-1 overflow-y-auto px-5 py-3 divide-y divide-coffee-100"></div>
             <div id="cart-footer" class="border-t border-coffee-100 px-5 pt-3 pb-5 space-y-3">
                 <p id="cart-ship" class="text-sm font-semibold rounded-xl px-3 py-2"></p>
+                <div>
+                    <input id="cart-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Số điện thoại của bạn *"
+                        class="w-full text-sm bg-coffee-50 text-coffee-800 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent-500">
+                    <p id="cart-phone-err" class="hidden text-xs text-red-500 mt-1">Vui lòng nhập số điện thoại để quán liên hệ xác nhận đơn.</p>
+                </div>
                 <textarea id="cart-note" rows="2" placeholder="Ghi chú: địa chỉ giao, ít đá, ít ngọt..."
                     class="w-full text-sm bg-coffee-50 text-coffee-800 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"></textarea>
                 <div class="flex items-end justify-between">
@@ -373,6 +378,22 @@
                     <a id="cart-sms" href="#" class="text-coffee-500 underline">Gửi đơn qua tin nhắn SMS</a>
                     <button onclick="xoaGioHang()" class="text-gray-400 hover:text-red-500">Xóa giỏ hàng</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hộp hướng dẫn gửi đơn qua Zalo -->
+    <div id="zalo-modal" class="hidden fixed inset-0 z-[130] items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-check"></i></span>
+                <h3 id="zalo-modal-title" class="text-lg font-bold text-coffee-900 leading-tight">Đã sao chép đơn hàng</h3>
+            </div>
+            <p class="text-sm text-coffee-700 mb-2">Bấm <b>Mở Zalo</b>, sau đó <b>bấm giữ ô nhập tin nhắn → chọn Dán</b> rồi gửi cho quán nhé!</p>
+            <pre id="zalo-modal-text" class="text-xs bg-coffee-50 text-coffee-800 rounded-xl p-3 max-h-48 overflow-y-auto whitespace-pre-wrap font-sans"></pre>
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <button onclick="dongHopZalo()" class="py-3 rounded-xl bg-coffee-50 text-coffee-700 font-bold">Để sau</button>
+                <button onclick="moZalo()" class="py-3 rounded-xl bg-[#0068ff] hover:bg-blue-600 text-white font-bold">Mở Zalo</button>
             </div>
         </div>
     </div>
