@@ -38,6 +38,7 @@ onSnapshot(doc(db, "settings", "introduce"), (docSnap) => {
         const desc = data.description || "";
         const contact = data.contact || "";
         window.shopAddresses = (data.address || "").split('\n').map(a => a.trim()).filter(Boolean);
+        window.shopHours = data.hours || "";
         const addressHtml = window.shopAddresses.map((a, i) => `${window.shopAddresses.length > 1 ? `Quầy ${i + 1}` : 'Địa chỉ'}: ${a}<br/>`).join('');
 
         const footerDesc = document.getElementById('footer-desc');
@@ -568,73 +569,288 @@ window.toggleChatbot = function () {
     }
 };
 
-window.sendChatMessage = function () {
+// Bỏ dấu, viết thường để hiểu cả câu gõ không dấu: "uống gì" -> "uong gi"
+function boDau(text) {
+    return (text || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/đ/g, 'd').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+const escHtml = (t) => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ngauNhien = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const tronMang = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
+// Tin nhắn có chứa cụm từ (so khớp theo từ, không bị "hi" khớp nhầm trong "ship")
+function coCum(msg, phrases) {
+    const m = ` ${msg} `;
+    return phrases.some(p => m.includes(` ${p} `));
+}
+
+const GOI_Y_CHUNG = ['Hôm nay uống gì ngon?', 'Xem thực đơn', 'Giờ mở cửa', 'Quán ở đâu?', 'Có freeship không?'];
+
+// Thẻ món trong khung chat, có nút thêm vào giỏ
+function theMonChat(c) {
+    return `<div class="flex items-center gap-2 bg-coffee-50 rounded-xl p-1.5 mt-2">
+        <img src="${c.image}" alt="" class="w-10 h-12 rounded-lg object-cover bg-coffee-100 shrink-0" onerror="this.style.visibility='hidden'">
+        <div class="flex-1 min-w-0">
+            <div class="font-bold text-coffee-900 text-[13px] leading-tight line-clamp-2">${escHtml(c.name)}</div>
+            <div class="text-xs"><span class="font-semibold text-accent-600">${window.formatVND(giaBan(c))}</span> <span class="text-coffee-400">· ${escHtml(c.category || '')}</span></div>
+        </div>
+        <button onclick="themVaoGio('${c.id}')" class="shrink-0 text-xs font-bold bg-accent-500 hover:bg-accent-600 text-white rounded-full px-2.5 py-1.5"><i class="fa-solid fa-plus"></i> Thêm</button>
+    </div>`;
+}
+
+function danhSachMonChat(list) {
+    return list.map(theMonChat).join('');
+}
+
+// Tìm món được nhắc tới trong câu hỏi (khớp đủ các từ trong tên món)
+function timMon(msg) {
+    const ketQua = window.coffeesData
+        .map(c => ({ c, ten: boDau(c.name) }))
+        .filter(({ ten }) => ten && ` ${msg} `.includes(` ${ten} `))
+        .sort((a, b) => b.ten.length - a.ten.length);
+    return ketQua.map(k => k.c);
+}
+
+function timDanhMuc(msg) {
+    const tuKhoa = {
+        'ca phe': ['ca phe', 'cafe', 'caphe', 'cf', 'coffee', 'cafe sua', 'den da'],
+        'tra': ['tra', 'tea', 'tra trai cay'],
+        'cacao': ['cacao', 'matcha', 'milo', 'socola', 'chocolate'],
+        'soda': ['soda', 'sua chua', 'yaourt', 'yogurt', 'da ua']
+    };
+    // Ưu tiên khớp đúng tên danh mục
+    const theoTen = window.categoriesData.find(cat => coCum(msg, [boDau(cat.name)]));
+    if (theoTen) return theoTen.name;
+    for (const [goc, kws] of Object.entries(tuKhoa)) {
+        if (coCum(msg, kws)) {
+            const cat = window.categoriesData.find(c => boDau(c.name).includes(goc));
+            if (cat) return cat.name;
+        }
+    }
+    return null;
+}
+
+const CAU_DUA = [
+    'Cà phê với mình giống như wifi vậy, thiếu là cả ngày "mất kết nối" liền 😆',
+    'Bí quyết dậy sớm của mình: một ly cà phê đen... và thêm một ly nữa ☕☕',
+    'Người ta yêu từ cái nhìn đầu tiên, còn mình thì yêu từ ngụm cà phê đầu tiên 😍',
+    'Đừng để deadline đánh gục bạn, để cà phê 3Bich đánh thức bạn trước 💪'
+];
+
+// Mỗi ý định: các cụm từ (đã bỏ dấu) + hàm trả lời { html, chips }
+const Y_DINH = [
+    {
+        ten: 'goi_y', kws: ['uong gi', 'uon gi', 'mon gi ngon', 'gi ngon', 'goi y', 'tu van', 'recommend', 'ngon nhat', 'ban chay', 'best seller', 'nen uong', 'nen goi', 'mon nao ngon', 'chon mon', 'hot'],
+        tra: () => {
+            const noiBat = window.coffeesData.filter(c => c.featured);
+            const nguon = noiBat.length ? noiBat : window.coffeesData;
+            if (!nguon.length) return { html: 'Menu đang tải, bạn đợi mình xíu nha ⏳' };
+            const chon = tronMang(nguon).slice(0, 3);
+            return {
+                html: ngauNhien(['Để mình "bắt mạch" khẩu vị giùm bạn nha 😎 Hôm nay thử mấy món này xem:', 'Hỏi đúng người rồi đó! Mấy món được khách mê nhất nè 🤩:', 'Sáng nay mà có ly này thì tỉnh như sáo luôn ☀️:'])
+                    + danhSachMonChat(chon),
+                chips: ['Gợi ý món khác', 'Món nào rẻ nhất?', 'Xem thực đơn']
+            };
+        }
+    },
+    {
+        ten: 're', kws: ['re nhat', 'gia re', 're re', 'tiet kiem', 'it tien', 'binh dan'],
+        tra: () => {
+            const re = [...window.coffeesData].sort((a, b) => giaBan(a) - giaBan(b)).slice(0, 3);
+            return { html: 'Ngon mà hạt dẻ, ví không đau nè 💸:' + danhSachMonChat(re), chips: ['Hôm nay uống gì ngon?', 'Có freeship không?'] };
+        }
+    },
+    {
+        ten: 'gia', kws: ['gia', 'bao nhieu', 'bn tien', 'nhieu tien', 'bao tien', 'price'],
+        tra: () => {
+            const gia = window.coffeesData.map(giaBan).filter(Boolean);
+            if (!gia.length) return { html: 'Menu đang tải, bạn đợi mình xíu nha ⏳' };
+            return {
+                html: `Giá bên mình siêu dễ thương, chỉ từ <b>${window.formatVND(Math.min(...gia))}</b> đến <b>${window.formatVND(Math.max(...gia))}</b> thôi 😊<br/>Bạn gõ tên món (vd: <i>"bạc xỉu bao nhiêu"</i>) để mình báo giá chính xác nha!`,
+                chips: ['Món nào rẻ nhất?', 'Xem thực đơn']
+            };
+        }
+    },
+    {
+        ten: 'menu', kws: ['menu', 'thuc don', 'co mon gi', 'co gi', 'ban gi', 'danh muc', 'cac mon', 'list mon', 'mon an'],
+        tra: () => ({
+            html: `Menu nhà 3Bich có ${window.coffeesData.length} món, chia thành mấy nhóm nè 📋:<br/>`
+                + window.categoriesData.map(cat => `• <b>${escHtml(cat.name)}</b> (${window.coffeesData.filter(c => c.category === cat.name).length} món)`).join('<br/>')
+                + '<br/>Bạn muốn xem nhóm nào?',
+            chips: window.categoriesData.map(c => c.name).slice(0, 5)
+        })
+    },
+    {
+        ten: 'gio', kws: ['may gio', 'gio mo cua', 'mo cua', 'dong cua', 'gio lam viec', 'mo luc', 'mo khi nao', 'gio nao', 'con mo', 'open'],
+        tra: () => ({
+            html: `Quán mở cửa <b>${escHtml(window.shopHours || 'Thứ 2 - Chủ nhật: 06:00 - 10:30')}</b> ⏰<br/>Dậy sớm ghé quán làm ly cà phê cho tỉnh táo nha! ☕`,
+            chips: ['Quán ở đâu?', 'Hôm nay uống gì ngon?']
+        })
+    },
+    {
+        ten: 'dia_chi', kws: ['dia chi', 'o dau', 'cho nao', 'quan o', 'duong nao', 'chi duong', 'ban do', 'map', 'quay', 'chi nhanh', 'co so'],
+        tra: () => {
+            const addrs = window.shopAddresses || [];
+            return {
+                html: (addrs.length
+                    ? 'Ghé 3Bich tại đây nha 📍:<br/>' + addrs.map((a, i) => `• ${addrs.length > 1 ? `<b>Quầy ${i + 1}:</b> ` : ''}${escHtml(a)}`).join('<br/>')
+                    : 'Quán ở Ninh Phước, Ninh Thuận nha 📍')
+                    + '<br/>Xem bản đồ ở trang <a href="introduce.html" class="underline font-semibold">Giới thiệu</a>. Lười đi thì để shipper chạy giùm, <b>freeship từ 3 ly</b> 🛵',
+                chips: ['Giờ mở cửa', 'Cách đặt hàng']
+            };
+        }
+    },
+    {
+        ten: 'ship', kws: ['ship', 'freeship', 'free ship', 'giao', 'giao hang', 'van chuyen', 'shipper', 'mang den', 'phi ship'],
+        tra: () => ({
+            html: 'Có liền! 🛵 <b>FREESHIP cho đơn từ 3 ly</b>, giao tận nơi khu vực Ninh Phước.<br/>Rủ thêm đồng nghiệp, bạn bè gom đơn là được miễn phí ship ngay 😉',
+            chips: ['Cách đặt hàng', 'Hôm nay uống gì ngon?']
+        })
+    },
+    {
+        ten: 'dat_hang', kws: ['dat hang', 'dat mon', 'order', 'mua', 'dat', 'cach dat', 'lam sao dat', 'muon dat'],
+        tra: () => ({
+            html: 'Đặt món dễ ợt nè 👇<br/>1️⃣ Bấm <b>+</b> ở món bạn thích để cho vào giỏ<br/>2️⃣ Mở <b>Giỏ hàng</b> xem tổng tiền, ghi chú địa chỉ<br/>3️⃣ Bấm <b>Đặt qua Zalo</b> hoặc <b>Gọi điện</b> là xong!<br/><button onclick="moGioHang()" class="mt-2 text-xs font-bold bg-coffee-700 text-white rounded-full px-3 py-1.5"><i class="fa-solid fa-bag-shopping"></i> Mở giỏ hàng</button>',
+            chips: ['Hôm nay uống gì ngon?', 'Xem thực đơn']
+        })
+    },
+    {
+        ten: 'gio_hang', kws: ['gio hang', 'gio cua toi', 'don cua toi', 'da chon', 'tong tien', 'tinh tien'],
+        tra: () => {
+            const { qty, tien } = tongGio();
+            if (!qty) return { html: 'Giỏ hàng của bạn đang trống trơn nè 🥲 Chọn món đi để mình tính tiền cho!', chips: ['Hôm nay uống gì ngon?', 'Xem thực đơn'] };
+            return {
+                html: `Giỏ của bạn có <b>${qty} ly</b>, tổng <b>${window.formatVND(tien)}</b>${qty >= SO_LY_FREESHIP ? ' và được <b>FREESHIP</b> 🎉' : ` (thêm ${SO_LY_FREESHIP - qty} ly nữa là freeship đó 😉)`}<br/><button onclick="moGioHang()" class="mt-2 text-xs font-bold bg-coffee-700 text-white rounded-full px-3 py-1.5"><i class="fa-solid fa-bag-shopping"></i> Xem giỏ hàng</button>`
+            };
+        }
+    },
+    {
+        ten: 'lien_he', kws: ['lien he', 'sdt', 'so dien thoai', 'dien thoai', 'zalo', 'goi', 'hotline', 'phone', 'facebook', 'fb', 'tiktok'],
+        tra: () => {
+            const sdt = window.shopPhone || '0937702383';
+            const hienThi = sdt.replace(/(\d{3})(\d{3})(\d+)/, '$1.$2.$3');
+            return {
+                html: `Gọi hoặc nhắn Zalo cho quán qua số <b>${hienThi}</b> nha 📞<br/><a href="https://zalo.me/${sdt}" target="_blank" class="inline-block mt-2 text-xs font-bold bg-[#0068ff] text-white rounded-full px-3 py-1.5 no-underline">Nhắn Zalo</a> <a href="tel:${sdt}" class="inline-block mt-2 text-xs font-bold bg-green-500 text-white rounded-full px-3 py-1.5 no-underline">Gọi ngay</a>`
+            };
+        }
+    },
+    {
+        ten: 'tuy_chinh', kws: ['it da', 'khong da', 'it ngot', 'khong duong', 'it duong', 'nhieu da', 'them sua', 'size', 'ly lon'],
+        tra: () => ({ html: 'Được luôn! 👌 Bạn ghi yêu cầu (ít đá, ít ngọt...) vào ô <b>Ghi chú</b> trong giỏ hàng, quán sẽ pha đúng ý bạn nha.' })
+    },
+    {
+        ten: 'thanh_toan', kws: ['thanh toan', 'chuyen khoan', 'momo', 'tien mat', 'stk', 'banking'],
+        tra: () => ({ html: 'Về thanh toán, bạn trao đổi trực tiếp với quán khi đặt qua Zalo hoặc điện thoại nha 💬', chips: ['Liên hệ quán'] })
+    },
+    {
+        ten: 'cam_on', kws: ['cam on', 'thank', 'thanks', 'tks', 'thank you', 'ok cam on'],
+        tra: () => ({ html: ngauNhien(['Không có chi nè 🥰 Chúc bạn một ngày thật nhiều năng lượng!', 'Hihi, phục vụ bạn là niềm vui của mình ☕💛', 'Cảm ơn bạn đã ghé 3Bich! Nhớ quay lại uống cà phê nha 😘']) })
+    },
+    {
+        ten: 'tam_biet', kws: ['bye', 'tam biet', 'hen gap lai', 'di nha', 'pp'],
+        tra: () => ({ html: 'Bye bye 👋 Hẹn gặp lại bạn ở 3Bich nha, nhớ ghé uống cà phê sáng đó!' })
+    },
+    {
+        ten: 'dua', kws: ['ke chuyen', 'chuyen cuoi', 'vui', 'buon', 'chan', 'met', 'buon ngu', 'joke', 'hai'],
+        tra: () => ({ html: ngauNhien(CAU_DUA) + '<br/>Mệt thì làm ly cà phê đi, mình gợi ý cho nè!', chips: ['Hôm nay uống gì ngon?'] })
+    },
+    {
+        ten: 'bot', kws: ['ban la ai', 'bot', 'ten gi', 'ai do', 'robot', 'nguoi that'],
+        tra: () => ({ html: 'Mình là <b>3Bich Assistant</b> 🤖, trợ lý nhỏ của quán. Mình rành menu, giá, giờ mở cửa và chỉ đường lắm nha. Hỏi gì cứ hỏi!', chips: GOI_Y_CHUNG.slice(0, 3) })
+    },
+    {
+        ten: 'chao', kws: ['chao', 'xin chao', 'hello', 'hi', 'hey', 'alo', 'helo', 'chao ban', 'chao shop', 'e oi', 'shop oi', 'ad oi'],
+        tra: () => ({ html: ngauNhien(['Chào bạn nè 👋 Hôm nay muốn làm ly gì cho tỉnh táo?', 'Hello hello ☀️ 3Bich nghe nè, bạn cần gì nhỉ?', 'Chào bạn! Ghé 3Bich là đúng chỗ rồi đó ☕ Mình giúp gì được bạn?']), chips: GOI_Y_CHUNG })
+    }
+];
+
+function botTraLoi(userMsg) {
+    const msg = boDau(userMsg);
+
+    // 1. Hỏi về một món cụ thể -> báo giá + nút thêm vào giỏ
+    const mon = timMon(msg);
+    const hoiGiaHoacMua = coCum(msg, ['gia', 'bao nhieu', 'bn', 'mua', 'dat', 'lay', 'cho', 'co', 'ngon', 'khong']) || msg.split(' ').length <= 4;
+    if (mon.length && hoiGiaHoacMua && !coCum(msg, ['ship', 'giao', 'dia chi', 'o dau', 'mo cua'])) {
+        const chon = mon.slice(0, 3);
+        return {
+            html: (chon.length === 1
+                ? `<b>${escHtml(chon[0].name)}</b> giá <b>${window.formatVND(giaBan(chon[0]))}</b> nè 😋${chon[0].desc ? `<br/><span class="text-coffee-500">${escHtml(chon[0].desc)}</span>` : ''}`
+                : 'Mình tìm được mấy món này nè:') + danhSachMonChat(chon),
+            chips: ['Hôm nay uống gì ngon?', 'Cách đặt hàng']
+        };
+    }
+
+    // 2. Ý định có nhiều cụm từ khớp nhất
+    let tot = null, diem = 0;
+    for (const y of Y_DINH) {
+        const d = y.kws.filter(k => coCum(msg, [k])).reduce((t, k) => t + k.split(' ').length, 0);
+        if (d > diem) { diem = d; tot = y; }
+    }
+
+    // 3. Nhắc tới một nhóm món (trà, matcha, soda...) -> liệt kê nhóm đó
+    const danhMuc = timDanhMuc(msg);
+    if (danhMuc && (!tot || ['menu', 'goi_y', 'gia', 'chao'].includes(tot.ten) || diem <= 1)) {
+        const mons = window.coffeesData.filter(c => c.category === danhMuc);
+        return {
+            html: `Nhóm <b>${escHtml(danhMuc)}</b> có ${mons.length} món nè 😋:` + danhSachMonChat(mons.slice(0, 6)) + (mons.length > 6 ? `<div class="mt-1 text-xs">...và ${mons.length - 6} món nữa trong Thực đơn</div>` : ''),
+            chips: ['Hôm nay uống gì ngon?', 'Xem thực đơn']
+        };
+    }
+
+    if (tot) return tot.tra();
+
+    // 4. Không hiểu -> trả lời vui + gợi ý câu hỏi
+    return {
+        html: ngauNhien([
+            'Ui, câu này hơi khó với mình rồi 😅 Bạn thử hỏi kiểu khác, hoặc chọn nhanh bên dưới nha!',
+            'Mình chưa hiểu lắm 🙈 Mình rành menu, giá, giờ mở cửa với địa chỉ lắm, hỏi mình mấy cái đó nha!'
+        ]) + `<br/>Cần gấp thì nhắn Zalo <b>093.770.2383</b> cho quán nhé.`,
+        chips: GOI_Y_CHUNG
+    };
+}
+
+window.sendChatMessage = function (preset) {
     const inputEl = document.getElementById('chatbot-input');
-    const message = inputEl.value.trim();
+    const message = (typeof preset === 'string' ? preset : inputEl.value).trim();
     if (!message) return;
 
-    // Hiển thị tin nhắn của người dùng
-    appendMessage(message, 'user');
+    appendMessage(escHtml(message), 'user');
     inputEl.value = '';
 
-    // Scroll to bottom
-    const messagesEl = document.getElementById('chatbot-messages');
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-
-    // Giả lập bot gõ phím
+    // Hiệu ứng "đang gõ..."
+    const typing = appendMessage('<span class="inline-flex gap-1"><span class="w-1.5 h-1.5 bg-coffee-400 rounded-full animate-bounce"></span><span class="w-1.5 h-1.5 bg-coffee-400 rounded-full animate-bounce [animation-delay:150ms]"></span><span class="w-1.5 h-1.5 bg-coffee-400 rounded-full animate-bounce [animation-delay:300ms]"></span></span>', 'bot');
     setTimeout(() => {
-        botReply(message);
-    }, 600);
+        typing.remove();
+        const { html, chips } = botTraLoi(message);
+        appendMessage(html, 'bot', chips);
+    }, 500 + Math.random() * 400);
 };
 
-function appendMessage(text, sender) {
+window.hoiNhanh = (text) => window.sendChatMessage(text);
+
+function appendMessage(html, sender, chips) {
     const messagesEl = document.getElementById('chatbot-messages');
     const msgDiv = document.createElement('div');
     msgDiv.className = 'flex items-start mb-3 ' + (sender === 'user' ? 'justify-end' : '');
 
     if (sender === 'user') {
         msgDiv.innerHTML = `
-            <div class="bg-coffee-600 text-white p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] text-sm">
-                ${text}
-            </div>
-        `;
+            <div class="bg-coffee-600 text-white p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] text-sm">${html}</div>`;
     } else {
+        const chipHtml = chips && chips.length
+            ? `<div class="flex flex-wrap gap-1.5 mt-2">${chips.map(c => `<button onclick="hoiNhanh('${escHtml(c).replace(/&#39;/g, "\\'")}')" class="text-xs font-semibold bg-accent-50 text-accent-600 border border-accent-500/30 rounded-full px-2.5 py-1 hover:bg-accent-500 hover:text-white transition-colors">${escHtml(c)}</button>`).join('')}</div>`
+            : '';
         msgDiv.innerHTML = `
             <div class="w-8 h-8 rounded-full bg-coffee-600 text-white flex items-center justify-center mr-2 flex-shrink-0 mt-1">
                 <i class="fa-solid fa-robot text-xs"></i>
             </div>
-            <div class="bg-white text-coffee-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-sm leading-relaxed">
-                ${text}
-            </div>
-        `;
+            <div class="bg-white text-coffee-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-sm leading-relaxed">${html}${chipHtml}</div>`;
     }
 
     messagesEl.appendChild(msgDiv);
     messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function botReply(userMsg) {
-    const lowerMsg = userMsg.toLowerCase();
-    let reply = "Xin lỗi, mình là Trợ lý AI đang trong giai đoạn học hỏi nên chưa hiểu rõ ý bạn. Bạn có thể liên hệ Zalo 093.770.2383 để được hỗ trợ tốt nhất nhé!";
-
-    if (lowerMsg.includes("ship") || lowerMsg.includes("giao") || lowerMsg.includes("vận chuyển")) {
-        reply = "Bên mình <b>FREESHIP cho đơn từ 3 ly</b>, giao tận nơi khu vực Ninh Phước, Ninh Thuận. Bạn nhắn Zalo hoặc gọi <b>093.770.2383</b> để đặt nhé!";
-    } else if (lowerMsg.includes("chào") || lowerMsg.includes("hi") || lowerMsg.includes("hello")) {
-        reply = "Chào bạn! Mình có thể giúp gì cho bạn hôm nay?";
-    } else if (lowerMsg.includes("giá") || lowerMsg.includes("bao nhiêu")) {
-        reply = "Giá các món bên mình dao động từ 15k đến 50k tùy loại. Bạn có thể vào mục <b>Thực Đơn</b> để xem chi tiết nhé!";
-    } else if (lowerMsg.includes("menu") || lowerMsg.includes("thực đơn") || lowerMsg.includes("có món gì")) {
-        reply = "Bên mình chuyên cà phê mộc, cà phê sữa, trà sữa, trà trái cây và nhiều món khác. Bạn có thể nhấn vào mục Thực Đơn để xem chi tiết nhé!";
-    } else if (lowerMsg.includes("địa chỉ") || lowerMsg.includes("ở đâu") || lowerMsg.includes("quán")) {
-        const addrs = window.shopAddresses || [];
-        reply = addrs.length
-            ? `Địa chỉ quán: <br/>${addrs.map((a, i) => `• ${addrs.length > 1 ? `Quầy ${i + 1}: ` : ''}<b>${a}</b>`).join('<br/>')}<br/>Bên mình cũng giao hàng tận nơi khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?`
-            : "Quán hiện đang giao hàng tận nơi tại khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?";
-    } else if (lowerMsg.includes("liên hệ") || lowerMsg.includes("sđt") || lowerMsg.includes("số điện thoại") || lowerMsg.includes("zalo")) {
-        reply = "Bạn có thể liên hệ trực tiếp qua số điện thoại hoặc Zalo: <b>093.770.2383</b> nha!";
-    }
-
-    appendMessage(reply, 'bot');
+    return msgDiv;
 }
 
 // --- ANALYTICS TRACKING ---
