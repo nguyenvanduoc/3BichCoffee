@@ -15,8 +15,8 @@ function formatVND(amount) {
 function taoTheSanPham(coffee) {
     return `
         <div class="bg-white rounded-2xl shadow-sm border border-coffee-100 overflow-hidden hover:shadow-xl transition-shadow duration-300 group cursor-pointer" onclick="xemChiTiet('${coffee.id}')">
-            <div class="relative h-56 overflow-hidden img-placeholder">
-                <img src="${coffee.image}" alt="${coffee.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="relative aspect-square overflow-hidden bg-white">
+                <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
             </div>
             <div class="p-5">
                 <div class="text-xs font-bold text-coffee-400 uppercase tracking-wider mb-1">${coffee.category}</div>
