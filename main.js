@@ -501,8 +501,6 @@ function veGioHang() {
     document.getElementById('cart-sms').href = `sms:${window.shopPhone}?&body=${encodeURIComponent(noiDungDon())}`;
 }
 
-document.getElementById('cart-sms')?.addEventListener('click', (e) => { if (!kiemTraSdt()) e.preventDefault(); });
-
 window.moGioHang = function () {
     veGioHang();
     document.getElementById('cart-drawer').classList.remove('hidden');
@@ -521,19 +519,9 @@ try { if (oSdt) oSdt.value = localStorage.getItem(SDT_KEY) || ''; } catch (e) { 
 ['cart-note', 'cart-phone'].forEach(id => document.getElementById(id)?.addEventListener('input', () => {
     document.getElementById('cart-sms').href = `sms:${window.shopPhone}?&body=${encodeURIComponent(noiDungDon())}`;
     if (id === 'cart-phone') {
-        document.getElementById('cart-phone-err').classList.add('hidden');
         try { localStorage.setItem(SDT_KEY, oSdt.value.trim()); } catch (e) { /* bỏ qua */ }
     }
 }));
-
-// Bắt buộc nhập SĐT hợp lệ (9-11 số) trước khi gửi đơn
-function kiemTraSdt() {
-    const so = (oSdt?.value || '').replace(/\D/g, '');
-    const ok = so.length >= 9 && so.length <= 11;
-    document.getElementById('cart-phone-err').classList.toggle('hidden', ok);
-    if (!ok) oSdt?.focus();
-    return ok;
-}
 
 // Zalo không cho điền sẵn tin nhắn: sao chép đơn rồi mở Zalo để khách dán vào
 function saoChep(text) {
@@ -556,7 +544,6 @@ function saoChep(text) {
 }
 
 window.datQuaZalo = function () {
-    if (!kiemTraSdt()) return;
     const text = noiDungDon();
     const daChep = saoChep(text);
     document.getElementById('zalo-modal-title').textContent = daChep ? 'Đã sao chép đơn hàng' : 'Sao chép đơn hàng để gửi';
