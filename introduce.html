@@ -193,7 +193,7 @@
             </div>
             <div>
                 <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Kết Nối</h4>
-                <div class="flex flex-col items-center md:items-start space-y-3">
+                <div class="w-fit mx-auto md:mx-0 flex flex-col items-start space-y-3">
                     <a href="https://www.facebook.com/profile.php?id=100069758060405" target="_blank"
                         class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
                         <div
@@ -202,7 +202,7 @@
                         </div>
                         <span class="font-medium">Facebook</span>
                     </a>
-                    <a href="https://id.zalo.me/0937702383" target="_blank"
+                    <a href="https://zalo.me/0937702383" target="_blank"
                         class="flex items-center text-coffee-200 hover:text-white transition-colors no-underline group">
                         <div
                             class="w-8 h-8 rounded-full bg-coffee-800 flex items-center justify-center group-hover:bg-blue-500 transition-colors mr-3">
@@ -325,7 +325,7 @@
                     if (contact) {
                         const cleanPhone = contact.replace(/\D/g, '');
                         if (cleanPhone) {
-                            contactLinkEl.href = `https://id.zalo.me/${cleanPhone}`;
+                            contactLinkEl.href = `https://zalo.me/${cleanPhone}`;
                         }
                         contactLinkEl.innerText = contact;
                         contactContainer.classList.remove('hidden');
