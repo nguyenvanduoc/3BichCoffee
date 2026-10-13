@@ -69,13 +69,13 @@ window.taoTheSanPham = function (coffee) {
     const badgeFeatured = coffee.featured ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Nổi Bật</div>` : '';
     const badgeSale = coffee.discountPrice ? `<div class="absolute top-2 right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Sale</div>` : '';
     return `
-        <div class="bg-white rounded-2xl shadow-sm border border-coffee-100 overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer" onclick="xemChiTiet('${coffee.id}')">
-            <div class="relative h-56 overflow-hidden img-placeholder">
-                <img src="${coffee.image}" alt="${coffee.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400?text=3BichCoffee'">
+        <div class="bg-white rounded-2xl shadow-sm border border-coffee-100 overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col h-full" onclick="xemChiTiet('${coffee.id}')">
+            <div class="relative aspect-square overflow-hidden bg-white">
+                <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400?text=3BichCoffee'">
                 ${badgeFeatured}
                 ${badgeSale}
             </div>
-            <div class="p-5 flex flex-col h-[calc(100%-14rem)]">
+            <div class="p-5 flex flex-col flex-1">
                 <div class="text-xs font-bold text-coffee-400 uppercase tracking-wider mb-1">${coffee.category}</div>
                 <h3 class="text-xl font-bold text-coffee-900 mb-2 line-clamp-2">${coffee.name}</h3>
                 <div class="mt-auto flex justify-between items-center pt-4">
