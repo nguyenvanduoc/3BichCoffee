@@ -66,26 +66,26 @@ window.formatVND = function (amount) {
 
 // Hàm tạo HTML thẻ sản phẩm
 window.taoTheSanPham = function (coffee) {
-    const badgeFeatured = coffee.featured ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Nổi Bật</div>` : '';
-    const badgeSale = coffee.discountPrice ? `<div class="absolute top-2 right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">Sale</div>` : '';
+    const badgeFeatured = coffee.featured ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:py-1 rounded shadow-sm">Nổi Bật</div>` : '';
+    const badgeSale = coffee.discountPrice ? `<div class="absolute top-2 right-2 bg-orange-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:py-1 rounded shadow-sm">Sale</div>` : '';
     return `
         <div class="bg-white rounded-2xl shadow-sm border border-coffee-100 overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col h-full" onclick="xemChiTiet('${coffee.id}')">
-            <div class="relative aspect-square overflow-hidden bg-white">
-                <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400?text=3BichCoffee'">
+            <div class="relative aspect-[3/4] overflow-hidden bg-coffee-50">
+                <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400?text=3BichCoffee'">
                 ${badgeFeatured}
                 ${badgeSale}
             </div>
-            <div class="p-5 flex flex-col flex-1">
-                <div class="text-xs font-bold text-coffee-400 uppercase tracking-wider mb-1">${coffee.category}</div>
-                <h3 class="text-xl font-bold text-coffee-900 mb-2 line-clamp-2">${coffee.name}</h3>
-                <div class="mt-auto flex justify-between items-center pt-4">
-                    <div>
+            <div class="p-3 sm:p-5 flex flex-col flex-1">
+                <div class="text-[10px] sm:text-xs font-bold text-coffee-400 uppercase tracking-wider mb-1 truncate">${coffee.category}</div>
+                <h3 class="text-sm sm:text-lg font-bold text-coffee-900 leading-snug line-clamp-2">${coffee.name}</h3>
+                <div class="mt-auto pt-2 sm:pt-3 flex items-end justify-between gap-2">
+                    <div class="flex flex-col leading-tight">
                         ${coffee.discountPrice
-            ? `<span class="text-lg font-black text-red-600">${window.formatVND(coffee.discountPrice)}</span> <span class="text-sm font-medium text-gray-400 line-through ml-1">${window.formatVND(coffee.price)}</span>`
-            : `<span class="text-lg font-black text-coffee-600">${window.formatVND(coffee.price)}</span>`}
+            ? `<span class="text-xs sm:text-sm font-medium text-gray-400 line-through">${window.formatVND(coffee.price)}</span><span class="text-base sm:text-lg font-black text-red-600">${window.formatVND(coffee.discountPrice)}</span>`
+            : `<span class="text-base sm:text-lg font-black text-coffee-600">${window.formatVND(coffee.price)}</span>`}
                     </div>
-                    <button class="w-10 h-10 rounded-full bg-coffee-100 text-coffee-700 flex items-center justify-center group-hover:bg-coffee-600 group-hover:text-white transition-colors">
-                        <i class="fa-solid fa-arrow-right"></i>
+                    <button class="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-coffee-100 text-coffee-700 flex items-center justify-center group-hover:bg-coffee-600 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-arrow-right text-xs sm:text-base"></i>
                     </button>
                 </div>
             </div>
