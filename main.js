@@ -38,7 +38,7 @@ onSnapshot(doc(db, "settings", "introduce"), (docSnap) => {
         const desc = data.description || "";
         const contact = data.contact || "";
         window.shopAddresses = (data.address || "").split('\n').map(a => a.trim()).filter(Boolean);
-        const addressHtml = window.shopAddresses.map(a => `Địa chỉ: ${a}<br/>`).join('');
+        const addressHtml = window.shopAddresses.map((a, i) => `${window.shopAddresses.length > 1 ? `Quầy ${i + 1}` : 'Địa chỉ'}: ${a}<br/>`).join('');
 
         const footerDesc = document.getElementById('footer-desc');
         const footerZalo = document.getElementById('footer-zalo');
@@ -417,7 +417,7 @@ function botReply(userMsg) {
     } else if (lowerMsg.includes("địa chỉ") || lowerMsg.includes("ở đâu") || lowerMsg.includes("quán")) {
         const addrs = window.shopAddresses || [];
         reply = addrs.length
-            ? `Quán ở: <br/>${addrs.map(a => `• <b>${a}</b>`).join('<br/>')}<br/>Bên mình cũng giao hàng tận nơi khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?`
+            ? `Địa chỉ quán: <br/>${addrs.map((a, i) => `• ${addrs.length > 1 ? `Quầy ${i + 1}: ` : ''}<b>${a}</b>`).join('<br/>')}<br/>Bên mình cũng giao hàng tận nơi khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?`
             : "Quán hiện đang giao hàng tận nơi tại khu vực Ninh Phước, Ninh Thuận. Bạn có muốn đặt món không ạ?";
     } else if (lowerMsg.includes("liên hệ") || lowerMsg.includes("sđt") || lowerMsg.includes("số điện thoại") || lowerMsg.includes("zalo")) {
         reply = "Bạn có thể liên hệ trực tiếp qua số điện thoại hoặc Zalo: <b>093.770.2383</b> nha!";
