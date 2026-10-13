@@ -4,14 +4,13 @@ import { db } from "./firebaseConfig.js";
 // State lưu trữ dữ liệu tải từ Firebase
 window.coffeesData = [];
 window.categoriesData = [];
-let currentFilterCategory = "Tất cả";
 
 // 1. TẢI DANH MỤC TỪ FIREBASE
 onSnapshot(collection(db, "categories"), (snapshot) => {
     window.categoriesData = [];
     snapshot.forEach(doc => window.categoriesData.push({ id: doc.id, ...doc.data() }));
     window.categoriesData.sort((a, b) => (a.order || 0) - (b.order || 0));
-    renderFilters();
+    window.renderMenu();
 });
 
 // 2. TẢI SẢN PHẨM TỪ FIREBASE
@@ -64,96 +63,169 @@ window.formatVND = function (amount) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-// Hàm tạo HTML thẻ sản phẩm
+// Khối giá: giá khuyến mãi (nếu có) + giá gốc gạch ngang
+function khoiGia(coffee, size = 'sm') {
+    const main = size === 'sm' ? 'text-sm sm:text-base' : 'text-base sm:text-lg';
+    return coffee.discountPrice
+        ? `<span class="${main} font-bold text-red-600">${window.formatVND(coffee.discountPrice)}</span> <span class="text-xs text-gray-400 line-through">${window.formatVND(coffee.price)}</span>`
+        : `<span class="${main} font-bold text-coffee-900">${window.formatVND(coffee.price)}</span>`;
+}
+
+const ANH_LOI = "this.src='https://placehold.co/300x400?text=3BichCoffee'";
+
+// Thẻ món nổi bật (hàng vuốt ngang)
 window.taoTheSanPham = function (coffee) {
-    const badgeFeatured = coffee.featured ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:py-1 rounded shadow-sm">Nổi Bật</div>` : '';
-    const badgeSale = coffee.discountPrice ? `<div class="absolute top-2 right-2 bg-orange-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:py-1 rounded shadow-sm">Sale</div>` : '';
+    const badgeSale = coffee.discountPrice ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">Sale</div>` : '';
     return `
-        <div class="bg-white rounded-2xl shadow-sm border border-coffee-100 overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col h-full" onclick="xemChiTiet('${coffee.id}')">
-            <div class="relative aspect-[3/4] overflow-hidden bg-coffee-50">
-                <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400?text=3BichCoffee'">
-                ${badgeFeatured}
+        <div class="snap-start shrink-0 w-[42%] sm:w-52 lg:w-60 flex flex-col cursor-pointer group" onclick="xemChiTiet('${coffee.id}')">
+            <div class="relative aspect-[3/4] rounded-2xl overflow-hidden bg-coffee-100">
+                <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="${ANH_LOI}">
                 ${badgeSale}
             </div>
-            <div class="p-3 sm:p-5 flex flex-col flex-1">
-                <div class="text-[10px] sm:text-xs font-bold text-coffee-400 uppercase tracking-wider mb-1 truncate">${coffee.category}</div>
-                <h3 class="text-sm sm:text-lg font-bold text-coffee-900 leading-snug line-clamp-2">${coffee.name}</h3>
-                <div class="mt-auto pt-2 sm:pt-3 flex items-end justify-between gap-2">
-                    <div class="flex flex-col leading-tight">
-                        ${coffee.discountPrice
-            ? `<span class="text-xs sm:text-sm font-medium text-gray-400 line-through">${window.formatVND(coffee.price)}</span><span class="text-base sm:text-lg font-black text-red-600">${window.formatVND(coffee.discountPrice)}</span>`
-            : `<span class="text-base sm:text-lg font-black text-coffee-600">${window.formatVND(coffee.price)}</span>`}
-                    </div>
-                    <button class="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-coffee-100 text-coffee-700 flex items-center justify-center group-hover:bg-coffee-600 group-hover:text-white transition-colors">
-                        <i class="fa-solid fa-arrow-right text-xs sm:text-base"></i>
-                    </button>
-                </div>
-            </div>
+            <h3 class="mt-3 text-sm sm:text-base font-semibold text-coffee-900 leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">${coffee.name}</h3>
+            <div class="mt-1">${khoiGia(coffee)}</div>
+            <button class="mt-2 w-full py-2 rounded-xl bg-accent-50 text-accent-600 group-hover:bg-accent-500 group-hover:text-white font-bold text-sm uppercase tracking-wide transition-colors">Chọn</button>
         </div>
     `;
 };
 
-// Render thanh lọc Menu
-window.renderFilters = function () {
-    const filterContainer = document.getElementById('category-filters');
-    if (!filterContainer) return;
+// Dòng món trong thực đơn (ảnh trái, tên + giá phải)
+function taoDongMenu(coffee) {
+    return `
+        <div class="flex gap-3 p-2 sm:p-3 bg-white border border-coffee-100 rounded-2xl cursor-pointer hover:shadow-md transition-shadow group" onclick="xemChiTiet('${coffee.id}')">
+            <div class="relative w-20 sm:w-24 aspect-[3/4] shrink-0 rounded-xl overflow-hidden bg-coffee-100">
+                <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-cover" onerror="${ANH_LOI}">
+            </div>
+            <div class="flex-1 min-w-0 flex flex-col py-1">
+                <h4 class="font-semibold text-coffee-900 text-sm sm:text-base leading-snug line-clamp-2">${coffee.name}</h4>
+                ${coffee.desc ? `<p class="hidden sm:block text-xs text-coffee-400 mt-1 line-clamp-2">${coffee.desc}</p>` : ''}
+                <div class="mt-auto pt-2 flex items-end justify-between gap-2">
+                    <div class="leading-tight">${khoiGia(coffee)}</div>
+                    <span class="shrink-0 w-8 h-8 rounded-full bg-accent-500 group-hover:bg-accent-600 text-white flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-plus text-sm"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+}
 
-    const isAllActive = currentFilterCategory === "Tất cả";
-    let html = `<button onclick="filterCoffees('Tất cả', this)" class="filter-btn px-6 py-2 ${isAllActive ? 'bg-coffee-600 text-white' : 'bg-white text-coffee-700 hover:bg-coffee-100'} rounded-full font-medium shadow-sm transition-colors">Tất cả</button>`;
+// Gom sản phẩm theo danh mục (theo thứ tự danh mục), bỏ danh mục rỗng
+function nhomTheoDanhMuc() {
+    const groups = window.categoriesData.map(cat => ({
+        name: cat.name,
+        items: window.coffeesData.filter(c => c.category === cat.name)
+    }));
+    const known = new Set(window.categoriesData.map(c => c.name));
+    const others = window.coffeesData.filter(c => !known.has(c.category));
+    if (others.length) groups.push({ name: 'Khác', items: others });
+    return groups.filter(g => g.items.length > 0);
+}
 
-    window.categoriesData.forEach(cat => {
-        const isActive = currentFilterCategory === cat.name;
-        const btnClass = isActive
-            ? "filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors"
-            : "filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors";
+// Render thực đơn: cột danh mục bên trái + danh sách món theo nhóm bên phải
+window.renderMenu = function () {
+    const sidebar = document.getElementById('category-filters');
+    const list = document.getElementById('all-coffees-grid');
+    if (!sidebar || !list) return;
 
-        html += `<button onclick="filterCoffees('${cat.name}', this)" class="${btnClass}">${cat.name}</button>`;
+    if (window.coffeesData.length === 0) {
+        list.innerHTML = `<p class="text-center text-coffee-400 italic">Chưa có sản phẩm nào trên hệ thống.</p>`;
+        return;
+    }
+
+    const groups = nhomTheoDanhMuc();
+
+    sidebar.innerHTML = groups.map((g, i) => `
+        <button data-cat="${i}" onclick="scrollToCategory(${i})"
+            class="cat-btn w-full flex flex-col sm:flex-row items-center gap-1 sm:gap-3 p-1.5 sm:p-2 rounded-xl border-2 border-transparent bg-white shadow-sm text-coffee-600 text-center sm:text-left transition-colors">
+            <img src="${g.items[0].image}" alt="" loading="lazy" class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg object-cover shrink-0 bg-coffee-100" onerror="this.style.display='none'">
+            <span class="text-[11px] sm:text-sm font-semibold leading-tight line-clamp-2">${g.name}</span>
+        </button>
+    `).join('');
+
+    list.innerHTML = groups.map((g, i) => `
+        <div id="cat-${i}" class="cat-section scroll-mt-[4.5rem] sm:scroll-mt-24">
+            <h3 class="bg-accent-50 text-coffee-800 font-bold text-base sm:text-xl px-4 py-2 rounded-xl mb-3">${g.name}</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                ${g.items.map(taoDongMenu).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    capNhatTheoCuon();
+};
+
+window.scrollToCategory = function (i) {
+    const el = document.getElementById(`cat-${i}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+// Đánh dấu danh mục đang xem + tab dưới khi cuộn
+function capNhatTheoCuon() {
+    const indexActive = document.getElementById('view-index')?.classList.contains('active');
+    const menuSection = document.getElementById('menu-section');
+    const offset = window.innerWidth >= 640 ? 110 : 90;
+
+    if (indexActive && menuSection) {
+        const sections = document.querySelectorAll('.cat-section');
+        let current = 0;
+        sections.forEach((sec, i) => { if (sec.getBoundingClientRect().top - offset <= 0) current = i; });
+
+        const sidebar = document.getElementById('category-filters');
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            const active = Number(btn.dataset.cat) === current;
+            btn.classList.toggle('bg-accent-50', active);
+            btn.classList.toggle('border-accent-500', active);
+            btn.classList.toggle('text-coffee-900', active);
+            btn.classList.toggle('bg-white', !active);
+            btn.classList.toggle('text-coffee-600', !active);
+            btn.classList.toggle('border-transparent', !active);
+            if (active && sidebar) {
+                const top = btn.offsetTop, bottom = top + btn.offsetHeight;
+                if (top < sidebar.scrollTop) sidebar.scrollTop = top;
+                else if (bottom > sidebar.scrollTop + sidebar.clientHeight) sidebar.scrollTop = bottom - sidebar.clientHeight;
+            }
+        });
+
+        const inMenu = menuSection.getBoundingClientRect().top - offset <= 0;
+        capNhatTabDuoi(inMenu ? 'list' : 'index');
+    } else {
+        capNhatTabDuoi(null);
+    }
+}
+
+let dangChoCuon = false;
+window.addEventListener('scroll', () => {
+    if (dangChoCuon) return;
+    dangChoCuon = true;
+    requestAnimationFrame(() => { capNhatTheoCuon(); dangChoCuon = false; });
+}, { passive: true });
+
+function capNhatTabDuoi(tab) {
+    document.querySelectorAll('.bottom-tab').forEach(btn => {
+        const active = btn.dataset.tab === tab;
+        btn.classList.toggle('text-accent-600', active);
+        btn.classList.toggle('text-gray-400', !active);
     });
-
-    filterContainer.innerHTML = html;
-};
-
-// Hành động Click Lọc Menu
-window.filterCoffees = function (categoryName, btnElement) {
-    currentFilterCategory = categoryName;
-    const buttons = document.querySelectorAll('.filter-btn');
-    buttons.forEach(btn => btn.className = 'filter-btn px-6 py-2 bg-white text-coffee-700 hover:bg-coffee-100 rounded-full font-medium shadow-sm transition-colors');
-    if (btnElement) btnElement.className = 'filter-btn px-6 py-2 bg-coffee-600 text-white rounded-full font-medium shadow-sm transition-colors';
-
-    renderListOnly();
-};
+}
 
 // Render lại toàn bộ sản phẩm
+let choCuonToiMenu = false;
 window.renderSanPhams = function () {
     const featuredGrid = document.getElementById('featured-grid');
     if (featuredGrid && window.coffeesData.length > 0) {
         const featuredCoffees = window.coffeesData.filter(c => c.featured);
         featuredGrid.innerHTML = featuredCoffees.length > 0
             ? featuredCoffees.map(window.taoTheSanPham).join('')
-            : `<p class="col-span-full text-center text-coffee-500 italic">Hiện chưa có món nổi bật nào.</p>`;
+            : `<p class="text-coffee-500 italic">Hiện chưa có món nổi bật nào.</p>`;
     }
-    renderListOnly();
+    window.renderMenu();
+
+    if (choCuonToiMenu && window.coffeesData.length > 0) {
+        choCuonToiMenu = false;
+        document.getElementById('menu-section')?.scrollIntoView();
+    }
 };
-
-// Render theo danh mục đang chọn
-function renderListOnly() {
-    const allCoffeesGrid = document.getElementById('all-coffees-grid');
-    if (!allCoffeesGrid) return;
-
-    if (window.coffeesData.length === 0) {
-        allCoffeesGrid.innerHTML = `<p class="col-span-full text-center text-coffee-400 italic">Chưa có sản phẩm nào trên hệ thống.</p>`;
-        return;
-    }
-
-    if (currentFilterCategory === "Tất cả") {
-        allCoffeesGrid.innerHTML = window.coffeesData.map(window.taoTheSanPham).join('');
-    } else {
-        const filtered = window.coffeesData.filter(c => c.category === currentFilterCategory);
-        allCoffeesGrid.innerHTML = filtered.length > 0
-            ? filtered.map(window.taoTheSanPham).join('')
-            : `<p class="col-span-full text-center text-coffee-400 italic">Không có món nào trong nhóm này.</p>`;
-    }
-}
 
 // Xem chi tiết
 window.xemChiTiet = function (coffeeId, addToHistory = true) {
@@ -184,8 +256,12 @@ window.xemChiTiet = function (coffeeId, addToHistory = true) {
 
 // --- CÁC HÀM UI ---
 window.navigate = function (viewId, addToHistory = true, productId = null) {
+    // "Thực đơn" nằm ngay trên trang chủ: mở trang chủ rồi cuộn tới phần menu
+    const denMenu = viewId === 'list';
+    const viewHienThi = denMenu ? 'index' : viewId;
+
     document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
-    const activeView = document.getElementById(`view-${viewId}`);
+    const activeView = document.getElementById(`view-${viewHienThi}`);
     if (activeView) activeView.classList.add('active');
     else { document.getElementById('view-index').classList.add('active'); viewId = 'index'; }
 
@@ -198,7 +274,14 @@ window.navigate = function (viewId, addToHistory = true, productId = null) {
         }
         history.pushState({ view: viewId, productId }, '', url);
     }
-    window.scrollTo(0, 0);
+
+    if (denMenu) {
+        if (window.coffeesData.length > 0) document.getElementById('menu-section')?.scrollIntoView();
+        else choCuonToiMenu = true;
+    } else {
+        window.scrollTo(0, 0);
+    }
+    capNhatTheoCuon();
 };
 
 window.addEventListener('popstate', (event) => {

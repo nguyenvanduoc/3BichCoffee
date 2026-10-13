@@ -23,7 +23,8 @@
                             50: '#fdf8f5', 100: '#f8ede7', 200: '#eedbd0',
                             300: '#e1c1af', 400: '#d0a086', 500: '#c28564',
                             600: '#b46d4c', 700: '#96553d', 800: '#7c4735', 900: '#643b2d',
-                        }
+                        },
+                        accent: { 50: '#fff5eb', 100: '#ffe6cc', 500: '#f0802a', 600: '#d9691a' }
                     }
                 }
             }
@@ -61,6 +62,9 @@
             scroll-behavior: smooth;
         }
 
+        .no-scrollbar { scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
         .img-placeholder {
             background-color: #eedbd0;
             display: flex;
@@ -70,12 +74,12 @@
     </style>
 </head>
 
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen pb-16 md:pb-0">
 
     <!-- Navigation Header -->
     <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigate('index')">
                     <i class="fa-solid fa-mug-hot text-coffee-600 text-3xl mr-3"></i>
@@ -120,59 +124,56 @@
 
         <!-- 1. VIEW: INDEX (Trang Chủ) -->
         <div id="view-index" class="page-view active">
-            <section class="relative bg-coffee-900 text-white overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1600&q=80"
-                    alt="Coffee background" class="absolute inset-0 w-full h-full object-cover opacity-40">
-                <div
-                    class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40 flex flex-col items-center text-center">
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">Đánh Thức Ngày Mới <br />
-                        Cùng Hương Vị Đích Thực</h1>
-                    <p class="text-lg md:text-xl text-coffee-100 max-w-2xl mb-10">Từng hạt cà phê được chọn lọc kỹ
-                        lưỡng, rang mộc hoàn toàn để giữ lại trọn vẹn sự tinh túy của tự nhiên.</p>
-                    <button onclick="navigate('list')"
-                        class="bg-coffee-600 hover:bg-coffee-500 text-white px-8 py-3 rounded-full text-lg font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">Khám
-                        Phá Thực Đơn</button>
-                </div>
-            </section>
-
-            <!-- Featured Coffees Section -->
-            <section class="py-16 bg-white">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-12">
-                        <h2 class="text-3xl font-bold text-coffee-800 mb-4">Món Nổi Bật</h2>
-                        <div class="h-1 w-20 bg-coffee-500 mx-auto rounded"></div>
-                    </div>
-                    <div id="featured-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-                        <p class="col-span-full text-center text-coffee-400 italic">Đang tải món nổi bật...</p>
-                    </div>
-                    <div class="text-center mt-12">
+            <!-- Banner -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+                <div class="relative rounded-3xl overflow-hidden bg-coffee-900 aspect-[16/11] sm:aspect-[21/9] lg:aspect-[3/1] shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=1600&q=80"
+                        alt="3BichCoffee" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                    <div class="absolute inset-0 bg-gradient-to-t from-coffee-900/90 via-coffee-900/30 to-transparent"></div>
+                    <div class="relative h-full flex flex-col justify-end p-5 sm:p-10 pb-12 sm:pb-16 text-white">
+                        <span class="inline-block self-start bg-accent-500 text-white text-[11px] sm:text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3">Rang mộc nguyên chất</span>
+                        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-2">Đánh Thức Ngày Mới<br class="hidden sm:block" /> Cùng Hương Vị Đích Thực</h1>
+                        <p class="hidden sm:block text-coffee-100 max-w-xl mb-5">Từng hạt cà phê được chọn lọc kỹ lưỡng, rang mộc hoàn toàn để giữ lại trọn vẹn sự tinh túy của tự nhiên.</p>
                         <button onclick="navigate('list')"
-                            class="text-coffee-600 font-semibold hover:text-coffee-800 underline decoration-2 underline-offset-4">Xem
-                            tất cả các món &rarr;</button>
+                            class="self-start bg-accent-500 hover:bg-accent-600 text-white px-5 sm:px-7 py-2 sm:py-3 rounded-full text-sm sm:text-base font-bold uppercase tracking-wide shadow-lg transition-colors">Đặt món ngay</button>
+                    </div>
+                </div>
+                <!-- Lời chào -->
+                <div class="relative -mt-7 mx-3 sm:mx-10 z-10">
+                    <button onclick="navigate('list')"
+                        class="w-full flex items-center justify-between bg-white border-2 border-accent-500/70 rounded-full pl-5 pr-4 py-3 sm:py-4 shadow-md text-left">
+                        <span class="text-coffee-900 font-semibold text-sm sm:text-lg truncate">Hôm nay uống gì nhỉ? <span class="text-coffee-400 font-medium">Xem menu</span></span>
+                        <span class="flex items-center text-accent-600 font-bold text-sm shrink-0"><i class="fa-solid fa-mug-hot mr-2"></i><i class="fa-solid fa-chevron-right text-xs"></i></span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Món Nổi Bật: hàng vuốt ngang -->
+            <section class="pt-10 sm:pt-14">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-end justify-between mb-4 sm:mb-6">
+                        <h2 class="text-xl sm:text-3xl font-bold text-coffee-900 uppercase">Món Nổi Bật</h2>
+                        <button onclick="navigate('list')" class="text-accent-600 font-semibold text-sm sm:text-base shrink-0">Xem tất cả <i class="fa-solid fa-chevron-right text-xs"></i></button>
+                    </div>
+                    <div id="featured-grid"
+                        class="flex gap-3 sm:gap-5 overflow-x-auto snap-x snap-mandatory scroll-pl-4 sm:scroll-pl-0 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
+                        <p class="text-coffee-400 italic">Đang tải món nổi bật...</p>
                     </div>
                 </div>
             </section>
-        </div>
 
-        <!-- 2. VIEW: LIST (Danh Sách Sản Phẩm) -->
-        <div id="view-list" class="page-view">
-            <section class="py-12 bg-coffee-50">
+            <!-- Thực Đơn: danh mục bên trái, danh sách món bên phải -->
+            <section id="menu-section" class="pt-10 sm:pt-14 pb-12 scroll-mt-16 sm:scroll-mt-20">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-12">
-                        <h1 class="text-4xl font-bold text-coffee-800 mb-4">Thực Đơn Của Chúng Tôi</h1>
-                        <p class="text-coffee-600 max-w-2xl mx-auto">Từ những ly cà phê đen truyền thống đậm đà đến
-                            những cốc latte nghệ thuật, chúng tôi có mọi thứ để thỏa mãn niềm đam mê cà phê của bạn.</p>
-                    </div>
-
-                    <!-- Filter/Categories (Dynamic from Firebase) -->
-                    <div id="category-filters" class="flex flex-wrap justify-center gap-3 mb-10">
-                        <div class="text-coffee-400 text-sm animate-pulse">Đang tải danh mục...</div>
-                    </div>
-
-                    <!-- All Coffees Grid -->
-                    <div id="all-coffees-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-                        <p class="col-span-full text-center text-coffee-400 italic animate-pulse">Đang tải thực đơn từ
-                            Cloud...</p>
+                    <h2 class="text-xl sm:text-3xl font-bold text-coffee-900 uppercase mb-4 sm:mb-6">Thực Đơn</h2>
+                    <div class="flex gap-3 sm:gap-6 items-start">
+                        <nav id="category-filters"
+                            class="w-[4.5rem] sm:w-44 lg:w-56 shrink-0 sticky top-[4.5rem] sm:top-24 max-h-[calc(100vh-10rem)] overflow-y-auto no-scrollbar flex flex-col gap-2">
+                            <div class="text-coffee-400 text-xs animate-pulse">Đang tải...</div>
+                        </nav>
+                        <div id="all-coffees-grid" class="flex-1 min-w-0 flex flex-col gap-6 sm:gap-8">
+                            <p class="text-center text-coffee-400 italic animate-pulse">Đang tải thực đơn...</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -276,6 +277,20 @@
         </div>
     </footer>
 
+    <!-- Thanh điều hướng dưới (mobile) -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-[80] bg-white border-t border-coffee-100 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+        <div class="grid grid-cols-4 h-16">
+            <button onclick="navigate('index')" data-tab="index" class="bottom-tab flex flex-col items-center justify-center gap-1 text-[11px] font-semibold text-gray-400">
+                <i class="fa-solid fa-house text-lg"></i>Trang chủ</button>
+            <button onclick="navigate('list')" data-tab="list" class="bottom-tab flex flex-col items-center justify-center gap-1 text-[11px] font-semibold text-gray-400">
+                <i class="fa-solid fa-mug-saucer text-lg"></i>Menu</button>
+            <button onclick="openOrderModal()" class="flex flex-col items-center justify-center gap-1 text-[11px] font-semibold text-gray-400">
+                <i class="fa-solid fa-phone text-lg"></i>Đặt hàng</button>
+            <a href="introduce.html" class="flex flex-col items-center justify-center gap-1 text-[11px] font-semibold text-gray-400 no-underline">
+                <i class="fa-solid fa-store text-lg"></i>Giới thiệu</a>
+        </div>
+    </nav>
+
     <!-- Order Modal -->
     <div id="order-modal" class="fixed inset-0 bg-black/60 z-[100] hidden items-center justify-center backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-sm w-full mx-4 transform transition-all scale-100">
@@ -299,7 +314,7 @@
     </div>
 
     <!-- AI Chatbot Widget -->
-    <div id="chatbot-widget" class="fixed bottom-6 right-6 z-[90] flex flex-col items-end">
+    <div id="chatbot-widget" class="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-[90] flex flex-col items-end">
         <!-- Chat Window -->
         <div id="chatbot-window"
             class="hidden bg-white w-[90vw] sm:w-96 rounded-2xl shadow-2xl border border-coffee-100 overflow-hidden mb-4 flex-col">
