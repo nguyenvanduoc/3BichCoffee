@@ -501,7 +501,7 @@ function veGioHang() {
             </div>
         </div>`).join('')
         : `<div class="py-10 text-center text-coffee-400">
-            <i class="fa-solid fa-bag-shopping text-4xl mb-3 opacity-50"></i>
+            <i class="fa-solid fa-cart-shopping text-4xl mb-3 opacity-50"></i>
             <p class="font-semibold">Giỏ hàng đang trống</p>
             <button onclick="dongGioHang(); navigate('list')" class="mt-4 text-accent-600 font-bold">Xem thực đơn <i class="fa-solid fa-chevron-right text-xs"></i></button>
         </div>`;
@@ -755,7 +755,7 @@ const Y_DINH = [
     {
         ten: 'dat_hang', kws: ['dat hang', 'dat mon', 'order', 'mua', 'dat', 'cach dat', 'lam sao dat', 'muon dat'],
         tra: () => ({
-            html: 'Đặt món dễ ợt nè 👇<br/>1️⃣ Bấm <b>+</b> ở món bạn thích để cho vào giỏ<br/>2️⃣ Mở <b>Giỏ hàng</b> xem tổng tiền, ghi chú địa chỉ<br/>3️⃣ Bấm <b>Đặt qua Zalo</b> hoặc <b>Gọi điện</b> là xong!<br/><button onclick="moGioHang()" class="mt-2 text-xs font-bold bg-coffee-700 text-white rounded-full px-3 py-1.5"><i class="fa-solid fa-bag-shopping"></i> Mở giỏ hàng</button>',
+            html: 'Đặt món dễ ợt nè 👇<br/>1️⃣ Bấm <b>+</b> ở món bạn thích để cho vào giỏ<br/>2️⃣ Mở <b>Giỏ hàng</b> xem tổng tiền, ghi chú địa chỉ<br/>3️⃣ Bấm <b>Đặt qua Zalo</b> hoặc <b>Gọi điện</b> là xong!<br/><button onclick="moGioHang()" class="mt-2 text-xs font-bold bg-coffee-700 text-white rounded-full px-3 py-1.5"><i class="fa-solid fa-cart-shopping"></i> Mở giỏ hàng</button>',
             chips: ['Hôm nay uống gì ngon?', 'Xem thực đơn']
         })
     },
@@ -765,7 +765,7 @@ const Y_DINH = [
             const { qty, tien } = tongGio();
             if (!qty) return { html: 'Giỏ hàng của bạn đang trống trơn nè 🥲 Chọn món đi để mình tính tiền cho!', chips: ['Hôm nay uống gì ngon?', 'Xem thực đơn'] };
             return {
-                html: `Giỏ của bạn có <b>${qty} ly</b>, tổng <b>${window.formatVND(tien)}</b>${qty >= SO_LY_FREESHIP ? ' và được <b>FREESHIP</b> 🎉' : ` (thêm ${SO_LY_FREESHIP - qty} ly nữa là freeship đó 😉)`}<br/><button onclick="moGioHang()" class="mt-2 text-xs font-bold bg-coffee-700 text-white rounded-full px-3 py-1.5"><i class="fa-solid fa-bag-shopping"></i> Xem giỏ hàng</button>`
+                html: `Giỏ của bạn có <b>${qty} ly</b>, tổng <b>${window.formatVND(tien)}</b>${qty >= SO_LY_FREESHIP ? ' và được <b>FREESHIP</b> 🎉' : ` (thêm ${SO_LY_FREESHIP - qty} ly nữa là freeship đó 😉)`}<br/><button onclick="moGioHang()" class="mt-2 text-xs font-bold bg-coffee-700 text-white rounded-full px-3 py-1.5"><i class="fa-solid fa-cart-shopping"></i> Xem giỏ hàng</button>`
             };
         }
     },
