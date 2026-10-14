@@ -212,6 +212,29 @@ function capNhatTabDuoi(tab) {
     });
 }
 
+// Hàng Món Nổi Bật tự chạy ngang; dừng khi khách chạm/rê chuột, chạy lại sau vài giây
+(function tuChayMonNoiBat() {
+    const el = document.getElementById('featured-grid');
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let tamDungDen = 0;
+    const tamDung = (ms) => { tamDungDen = Date.now() + ms; };
+    ['pointerdown', 'touchstart', 'wheel'].forEach(ev => el.addEventListener(ev, () => tamDung(6000), { passive: true }));
+    el.addEventListener('mouseenter', () => tamDung(60 * 60 * 1000));
+    el.addEventListener('mouseleave', () => tamDung(2000));
+
+    setInterval(() => {
+        if (Date.now() < tamDungDen || document.hidden) return;
+        if (!document.getElementById('view-index')?.classList.contains('active')) return;
+        const the = el.firstElementChild;
+        if (!the || el.scrollWidth <= el.clientWidth + 4) return;
+        const r = el.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) return; // chỉ chạy khi đang nhìn thấy
+        const buoc = the.getBoundingClientRect().width + parseFloat(getComputedStyle(el).columnGap || 0);
+        if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 8) el.scrollTo({ left: 0, behavior: 'smooth' });
+        else el.scrollBy({ left: buoc, behavior: 'smooth' });
+    }, 3000);
+})();
+
 // Render lại toàn bộ sản phẩm
 let choCuonToiMenu = false;
 window.renderSanPhams = function () {
