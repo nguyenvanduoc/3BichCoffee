@@ -39,6 +39,10 @@
         }
     </script>
     <style>
+        /* Tắt "chạm 2 lần để phóng to" khi bấm nhanh nút +; vẫn phóng to bằng 2 ngón được */
+        html, button, a, [onclick], input, textarea, select { touch-action: manipulation; }
+        /* iPhone tự zoom khi bấm vào ô nhập chữ nhỏ hơn 16px */
+        @media (max-width: 767px) { input, textarea, select { font-size: 16px !important; } }
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: #fdf8f5;
