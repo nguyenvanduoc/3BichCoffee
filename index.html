@@ -113,7 +113,7 @@
             <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer" onclick="navigate('index')">
-                    <svg class="w-11 h-11 sm:w-12 sm:h-12 shrink-0" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96" fill="#643b2d"/><circle cx="100" cy="100" r="84" fill="none" stroke="#fdf8f5" stroke-width="5"/><text x="100" y="120" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="700" font-size="64" fill="#ffffff">3B</text><g transform="translate(100 152) rotate(-25)"><ellipse rx="11" ry="14" fill="#f0802a"/><path d="M0 -13c-4 7 4 19 0 26" stroke="#643b2d" stroke-width="2.5" fill="none"/></g></svg>
+                    <img src="IMG/logo-3bich.png" alt="Logo 3BichCoffee" class="w-[52px] h-[52px] sm:w-16 sm:h-16 shrink-0">
                     <span class="leading-none">
                         <span class="block font-brand text-[1.6rem] sm:text-3xl tracking-wide text-coffee-900">3BICH</span>
                         <span class="block text-[9px] sm:text-[10px] font-bold tracking-[0.3em] text-[#f0802a] mt-1">COFFEE · TEA</span>
@@ -130,7 +130,7 @@
                         Thiệu</a>
                     <button onclick="moGioHang()" aria-label="Giỏ hàng"
                         class="relative text-coffee-800 hover:text-coffee-600 focus:outline-none">
-                        <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                        <i class="fa-solid fa-cart-shopping text-2xl"></i>
                         <span class="cart-count hidden absolute -top-2 -right-2.5 min-w-[1.25rem] h-5 px-1 rounded-full bg-accent-500 text-white text-[11px] font-bold flex items-center justify-center">0</span>
                     </button>
                 </nav>
@@ -138,7 +138,7 @@
                 <div class="md:hidden flex items-center gap-5">
                     <button onclick="moGioHang()" aria-label="Giỏ hàng"
                         class="relative text-coffee-800 hover:text-coffee-600 focus:outline-none">
-                        <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                        <i class="fa-solid fa-cart-shopping text-2xl"></i>
                         <span class="cart-count hidden absolute -top-2 -right-2.5 min-w-[1.25rem] h-5 px-1 rounded-full bg-accent-500 text-white text-[11px] font-bold flex items-center justify-center">0</span>
                     </button>
                     <button onclick="toggleMobileMenu()"
@@ -279,7 +279,7 @@
                                 </button>
                                 <button onclick="themVaoGio(window.currentProductId, true); moGioHang()"
                                     class="flex-1 bg-coffee-800 hover:bg-coffee-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-colors flex justify-center items-center cursor-pointer">
-                                    <i class="fa-solid fa-bag-shopping mr-2"></i> Đặt Mua Ngay
+                                    <i class="fa-solid fa-cart-shopping mr-2"></i> Đặt Mua Ngay
                                 </button>
                             </div>
                         </div>
@@ -296,7 +296,7 @@
             class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 md:gap-8 text-center md:text-left">
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center justify-center md:justify-start gap-3 mb-4" aria-label="3BichCoffee">
-                    <svg class="w-12 h-12 shrink-0" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96" fill="#fdf8f5"/><circle cx="100" cy="100" r="84" fill="none" stroke="#643b2d" stroke-width="5"/><text x="100" y="120" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="700" font-size="64" fill="#643b2d">3B</text><g transform="translate(100 152) rotate(-25)"><ellipse rx="11" ry="14" fill="#f0802a"/><path d="M0 -13c-4 7 4 19 0 26" stroke="#fdf8f5" stroke-width="2.5" fill="none"/></g></svg>
+                    <img src="IMG/logo-3bich.png" alt="Logo 3BichCoffee" class="w-20 h-20 shrink-0">
                     <span class="leading-none text-left">
                         <span class="block font-brand text-3xl tracking-wide text-white">3BICH</span>
                         <span class="block text-[10px] font-bold tracking-[0.3em] text-[#f0802a] mt-1">COFFEE · TEA</span>
@@ -361,7 +361,7 @@
             <button onclick="navigate('list')" data-tab="list" class="bottom-tab flex flex-col items-center justify-center gap-1 text-[11px] font-semibold text-gray-400">
                 <i class="fa-solid fa-mug-saucer text-lg"></i>Menu</button>
             <button onclick="moGioHang()" class="flex flex-col items-center justify-center gap-1 text-[11px] font-semibold text-gray-400">
-                <span class="relative"><i class="fa-solid fa-bag-shopping text-lg"></i>
+                <span class="relative"><i class="fa-solid fa-cart-shopping text-lg"></i>
                     <span class="cart-count hidden absolute -top-1.5 -right-3 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-accent-500 text-white text-[10px] font-bold flex items-center justify-center">0</span></span>Giỏ hàng</button>
             <a href="introduce.html" class="flex flex-col items-center justify-center gap-1 text-[11px] font-semibold text-gray-400 no-underline">
                 <i class="fa-solid fa-store text-lg"></i>Giới thiệu</a>
@@ -372,7 +372,7 @@
     <button id="cart-bar" onclick="moGioHang()"
         class="hidden fixed z-[85] left-4 right-4 bottom-[4.75rem] md:left-1/2 md:right-auto md:-translate-x-1/2 md:w-[420px] md:bottom-6 bg-coffee-800 text-white rounded-2xl shadow-2xl px-4 py-3 items-center justify-between gap-3">
         <span class="flex items-center gap-3 min-w-0">
-            <span class="relative shrink-0"><i class="fa-solid fa-bag-shopping text-xl"></i>
+            <span class="relative shrink-0"><i class="fa-solid fa-cart-shopping text-xl"></i>
                 <span class="cart-count absolute -top-2 -right-2.5 min-w-[1.25rem] h-5 px-1 rounded-full bg-accent-500 text-white text-[11px] font-bold flex items-center justify-center">0</span></span>
             <span id="cart-bar-total" class="font-bold text-base truncate">0 ₫</span>
         </span>
@@ -384,7 +384,7 @@
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="dongGioHang()"></div>
         <div class="absolute bottom-0 inset-x-0 md:inset-y-0 md:left-auto md:right-0 md:w-[440px] max-h-[90vh] md:max-h-none bg-white rounded-t-3xl md:rounded-none shadow-2xl flex flex-col">
             <div class="flex items-center justify-between px-5 py-4 border-b border-coffee-100">
-                <h3 class="text-xl font-bold text-coffee-900"><i class="fa-solid fa-bag-shopping mr-2 text-accent-500"></i>Giỏ hàng</h3>
+                <h3 class="text-xl font-bold text-coffee-900"><i class="fa-solid fa-cart-shopping mr-2 text-accent-500"></i>Giỏ hàng</h3>
                 <button onclick="dongGioHang()" class="text-coffee-400 hover:text-coffee-600" aria-label="Đóng"><i class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
             <div id="cart-items" class="flex-1 overflow-y-auto px-5 py-3 divide-y divide-coffee-100"></div>
