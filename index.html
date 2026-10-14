@@ -24,10 +24,13 @@
     <meta name="twitter:description" content="☕ Cà phê rang mộc nguyên chất, bạc xỉu, cà phê muối, matcha, trà trái cây chỉ từ 12K. Mở cửa từ 6h sáng. FREESHIP từ 3 ly tại Ninh Phước – đặt ngay qua Zalo 093.770.2383!">
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=80">
     <meta name="theme-color" content="#7c4735">
+    <link rel="icon" type="image/png" sizes="32x32" href="IMG/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="IMG/favicon-192.png">
+    <link rel="apple-touch-icon" href="IMG/apple-touch-icon.png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Quicksand -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -48,6 +51,7 @@
         }
     </script>
     <style>
+        .font-brand { font-family: 'Oswald', sans-serif; font-weight: 700; }
         /* Tắt "chạm 2 lần để phóng to" khi bấm nhanh nút +; vẫn phóng to bằng 2 ngón được */
         html, button, a, [onclick], input, textarea, select { touch-action: manipulation; }
         /* iPhone tự zoom khi bấm vào ô nhập chữ nhỏ hơn 16px */
@@ -108,9 +112,12 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 sm:h-20">
                 <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigate('index')">
-                    <i class="fa-solid fa-mug-hot text-coffee-600 text-3xl mr-3"></i>
-                    <span class="font-bold text-2xl text-coffee-800 tracking-tight">3BichCoffee</span>
+                <div class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer" onclick="navigate('index')">
+                    <svg class="w-11 h-11 sm:w-12 sm:h-12 shrink-0" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96" fill="#643b2d"/><circle cx="100" cy="100" r="84" fill="none" stroke="#fdf8f5" stroke-width="5"/><text x="100" y="120" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="700" font-size="64" fill="#ffffff">3B</text><g transform="translate(100 152) rotate(-25)"><ellipse rx="11" ry="14" fill="#f0802a"/><path d="M0 -13c-4 7 4 19 0 26" stroke="#643b2d" stroke-width="2.5" fill="none"/></g></svg>
+                    <span class="leading-none">
+                        <span class="block font-brand text-[1.6rem] sm:text-3xl tracking-wide text-coffee-900">3BICH</span>
+                        <span class="block text-[9px] sm:text-[10px] font-bold tracking-[0.3em] text-[#f0802a] mt-1">COFFEE · TEA</span>
+                    </span>
                 </div>
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex items-center space-x-8">
@@ -288,9 +295,12 @@
         <div
             class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 md:gap-8 text-center md:text-left">
             <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center justify-center md:justify-start mb-4">
-                    <i class="fa-solid fa-mug-hot text-2xl mr-2 text-white"></i>
-                    <span class="font-bold text-2xl text-white">3BichCoffee</span>
+                <div class="flex items-center justify-center md:justify-start gap-3 mb-4" aria-label="3BichCoffee">
+                    <svg class="w-12 h-12 shrink-0" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96" fill="#fdf8f5"/><circle cx="100" cy="100" r="84" fill="none" stroke="#643b2d" stroke-width="5"/><text x="100" y="120" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="700" font-size="64" fill="#643b2d">3B</text><g transform="translate(100 152) rotate(-25)"><ellipse rx="11" ry="14" fill="#f0802a"/><path d="M0 -13c-4 7 4 19 0 26" stroke="#fdf8f5" stroke-width="2.5" fill="none"/></g></svg>
+                    <span class="leading-none text-left">
+                        <span class="block font-brand text-3xl tracking-wide text-white">3BICH</span>
+                        <span class="block text-[10px] font-bold tracking-[0.3em] text-[#f0802a] mt-1">COFFEE · TEA</span>
+                    </span>
                 </div>
                 <p class="text-sm" id="footer-desc">Bắt nguồn từ tình yêu với hạt cà phê Việt Nam và mong muốn gói ghém
                     trọn vẹn sự thanh
