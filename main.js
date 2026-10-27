@@ -886,7 +886,7 @@ function appendMessage(html, sender, chips) {
             ? `<div class="flex flex-wrap gap-1.5 mt-2">${chips.map(c => `<button onclick="hoiNhanh('${escHtml(c).replace(/&#39;/g, "\\'")}')" class="text-xs font-semibold bg-accent-50 text-accent-600 border border-accent-500/30 rounded-full px-2.5 py-1 hover:bg-accent-500 hover:text-white transition-colors">${escHtml(c)}</button>`).join('')}</div>`
             : '';
         msgDiv.innerHTML = `
-            <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-2 flex-shrink-0 mt-1">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#27467f] to-[#7b5cf0] text-white flex items-center justify-center mr-2 flex-shrink-0 mt-1">
                 <svg class="w-[18px] h-[18px]"><use href="#ai-spark"/></svg>
             </div>
             <div class="bg-white text-coffee-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-sm leading-relaxed">${html}${chipHtml}</div>`;
