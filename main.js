@@ -801,7 +801,7 @@ const Y_DINH = [
     },
     {
         ten: 'bot', kws: ['ban la ai', 'bot', 'ten gi', 'ai do', 'robot', 'nguoi that'],
-        tra: () => ({ html: 'Mình là <b>3Bich Assistant</b> 🤖, trợ lý nhỏ của quán. Mình rành menu, giá, giờ mở cửa và chỉ đường lắm nha. Hỏi gì cứ hỏi!', chips: GOI_Y_CHUNG.slice(0, 3) })
+        tra: () => ({ html: 'Mình là <b>Trợ lý AI 3Bich</b> ✨, trợ lý nhỏ của quán. Mình rành menu, giá, giờ mở cửa và chỉ đường lắm nha. Hỏi gì cứ hỏi!', chips: GOI_Y_CHUNG.slice(0, 3) })
     },
     {
         ten: 'chao', kws: ['chao', 'xin chao', 'hello', 'hi', 'hey', 'alo', 'helo', 'chao ban', 'chao shop', 'e oi', 'shop oi', 'ad oi'],
@@ -886,8 +886,8 @@ function appendMessage(html, sender, chips) {
             ? `<div class="flex flex-wrap gap-1.5 mt-2">${chips.map(c => `<button onclick="hoiNhanh('${escHtml(c).replace(/&#39;/g, "\\'")}')" class="text-xs font-semibold bg-accent-50 text-accent-600 border border-accent-500/30 rounded-full px-2.5 py-1 hover:bg-accent-500 hover:text-white transition-colors">${escHtml(c)}</button>`).join('')}</div>`
             : '';
         msgDiv.innerHTML = `
-            <div class="w-8 h-8 rounded-full bg-coffee-600 text-white flex items-center justify-center mr-2 flex-shrink-0 mt-1">
-                <i class="fa-solid fa-robot text-xs"></i>
+            <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-2 flex-shrink-0 mt-1">
+                <svg class="w-[18px] h-[18px]"><use href="#ai-spark"/></svg>
             </div>
             <div class="bg-white text-coffee-800 p-3 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-sm leading-relaxed">${html}${chipHtml}</div>`;
     }
