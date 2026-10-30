@@ -501,6 +501,26 @@ function hienThongBao(text) {
 }
 
 // Nội dung đơn hàng gửi qua Zalo / SMS
+// Ô thời gian trong giỏ: mặc định là thời điểm hiện tại, khách sửa được
+const pad2 = (n) => String(n).padStart(2, '0');
+const giaTriThoiGian = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+let khachDaChonGio = false;
+
+function datGioMacDinh() {
+    const o = document.getElementById('cart-time');
+    if (!o) return;
+    const now = giaTriThoiGian(new Date());
+    o.min = now;
+    // Chưa tự chọn giờ, hoặc giờ đã chọn đã qua -> lấy giờ hiện tại
+    if (!khachDaChonGio || !o.value || o.value < now) { o.value = now; khachDaChonGio = false; }
+}
+
+function thoiGianDon() {
+    const v = document.getElementById('cart-time')?.value;
+    const d = v ? new Date(v) : new Date();
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())} - ${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+
 function noiDungDon() {
     const { qty, tien } = tongGio();
     const lines = dongGio().map(d => `- ${d.coffee.name} x${d.qty} = ${window.formatVND(d.qty * giaBan(d.coffee))}`);
@@ -508,6 +528,7 @@ function noiDungDon() {
     const sdtKhach = (document.getElementById('cart-phone')?.value || '').trim();
     return [
         'Đơn hàng 3BichCoffee',
+        `Thời gian: ${thoiGianDon()}`,
         ...lines,
         `Tổng: ${qty} ly - ${window.formatVND(tien)}${qty >= SO_LY_FREESHIP ? ' (Freeship)' : ''}`,
         sdtKhach ? `SĐT khách: ${sdtKhach}` : '',
@@ -583,6 +604,7 @@ function veGioHang() {
 }
 
 window.moGioHang = function () {
+    datGioMacDinh();
     veGioHang();
     document.getElementById('cart-drawer').classList.remove('hidden');
     document.body.classList.add('overflow-hidden');
@@ -597,7 +619,8 @@ window.dongGioHang = function () {
 const SDT_KEY = '3bich_sdt_khach';
 const oSdt = document.getElementById('cart-phone');
 try { if (oSdt) oSdt.value = localStorage.getItem(SDT_KEY) || ''; } catch (e) { /* bỏ qua */ }
-['cart-note', 'cart-phone'].forEach(id => document.getElementById(id)?.addEventListener('input', () => {
+['cart-note', 'cart-phone', 'cart-time'].forEach(id => document.getElementById(id)?.addEventListener('input', () => {
+    if (id === 'cart-time') khachDaChonGio = true;
     document.getElementById('cart-sms').href = `sms:${window.shopPhone}?&body=${encodeURIComponent(noiDungDon())}`;
     if (id === 'cart-phone') {
         try { localStorage.setItem(SDT_KEY, oSdt.value.trim()); } catch (e) { /* bỏ qua */ }
@@ -625,6 +648,7 @@ function saoChep(text) {
 }
 
 window.datQuaZalo = function () {
+    datGioMacDinh();
     const text = noiDungDon();
     const daChep = saoChep(text);
     document.getElementById('zalo-modal-title').textContent = daChep ? 'Đã sao chép đơn hàng' : 'Sao chép đơn hàng để gửi';
