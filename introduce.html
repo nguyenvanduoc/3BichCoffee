@@ -28,37 +28,14 @@
     <link rel="icon" type="image/png" sizes="192x192" href="IMG/favicon-192.png">
     <link rel="apple-touch-icon" href="IMG/apple-touch-icon.png">
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Quicksand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Cinzel:wght@700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Quicksand', 'sans-serif'],
-                    },
-                    colors: {
-                        coffee: {
-                            50: '#fdf8f5',
-                            100: '#f8ede7',
-                            200: '#eedbd0',
-                            300: '#e1c1af',
-                            400: '#d0a086',
-                            500: '#c28564',
-                            600: '#b46d4c',
-                            700: '#96553d',
-                            800: '#7c4735',
-                            900: '#643b2d',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         .font-brand { font-family: 'Alfa Slab One', serif; font-weight: 400; }
         .font-tag { font-family: 'Cinzel', serif; font-weight: 700; }
@@ -76,6 +53,8 @@
             scroll-behavior: smooth;
         }
     </style>
+    <!-- Tailwind đã biên dịch sẵn (xem tailwind.config.js) -->
+    <link rel="stylesheet" href="css/site.css">
 </head>
 
 <body class="flex flex-col min-h-screen">
