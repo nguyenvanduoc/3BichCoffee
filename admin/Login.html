@@ -235,9 +235,9 @@
     </div>
 
     <script type="module">
-        // Import Firestore query functions thay vì Auth
-        import { collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { db } from "../firebaseConfig.js";
+        import { auth, adminSignIn, adminSignOut, displayName, onAuthStateChanged } from "./adminAuth.js";
 
         // UI Elements
         const loginScreen = document.getElementById('loginScreen');
@@ -247,8 +247,7 @@
         const btnLogin = document.getElementById('btnLogin');
         const welcomeText = document.getElementById('welcomeText');
 
-        // --- 1. KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP (Session Storage) ---
-        // Do không dùng Firebase Auth, ta dùng Session Storage để giữ đăng nhập khi F5 lại trang
+        // --- 1. KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP (Firebase Auth) ---
         function checkLoginState() {
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             const loggedInName = sessionStorage.getItem('loggedInName');
@@ -266,8 +265,18 @@
             }
         }
         checkLoginState();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('loggedInName', displayName(user));
+            } else {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('loggedInName');
+            }
+            checkLoginState();
+        });
 
-        // --- 2. XỬ LÝ ĐĂNG NHẬP (Lấy dữ liệu từ Firestore) ---
+        // --- 2. XỬ LÝ ĐĂNG NHẬP (Firebase Authentication) ---
         loginForm.onsubmit = async (e) => {
             e.preventDefault();
             errorMessage.classList.add('hidden');
@@ -280,40 +289,30 @@
             btnLogin.disabled = true;
 
             try {
-                // TẠO TRUY VẤN: Tìm trong collection "admins" (Bạn có thể đổi tên bảng ở đây nếu cần)
-                // Cần khớp cả 2 trường: name và password
-                const adminsRef = collection(db, "users");
-                const q = query(adminsRef, where("name", "==", nameInput), where("password", "==", passwordInput));
+                const user = await adminSignIn(nameInput, passwordInput);
 
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    // TÌM THẤY TÀI KHOẢN -> Đăng nhập thành công
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('loggedInName', nameInput); // Lưu tên để hiển thị
-
-                    // Lưu lịch sử Login
-                    try {
-                        await addDoc(collection(db, "SessionLogin"), {
-                            userName: nameInput,
-                            action: "login",
-                            timestamp: new Date().toISOString()
-                        });
-                    } catch (err) {
-                        console.error("Lỗi ghi log đăng nhập:", err);
-                    }
-
-                    // Chuyển giao diện
-                    checkLoginState();
-                    loginForm.reset();
-                } else {
-                    // KHÔNG TÌM THẤY TÀI KHOẢN
-                    errorMessage.innerText = "Sai tên đăng nhập hoặc mật khẩu!";
-                    errorMessage.classList.remove('hidden');
+                // Lưu lịch sử Login
+                try {
+                    await addDoc(collection(db, "SessionLogin"), {
+                        userName: displayName(user),
+                        action: "login",
+                        timestamp: new Date().toISOString()
+                    });
+                } catch (err) {
+                    console.error("Lỗi ghi log đăng nhập:", err);
                 }
+
+                checkLoginState();
+                resetInactivityTimeout();
+                loginForm.reset();
             } catch (error) {
-                console.error("Lỗi truy vấn:", error);
-                errorMessage.innerText = "Lỗi kết nối cơ sở dữ liệu! Vui lòng kiểm tra lại quyền truy cập (Rules) của Firestore.";
+                console.error("Lỗi đăng nhập:", error);
+                const code = error && error.code || '';
+                errorMessage.innerText = ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'].includes(code)
+                    ? "Sai tên đăng nhập hoặc mật khẩu!"
+                    : code === 'auth/too-many-requests'
+                        ? "Đăng nhập sai quá nhiều lần. Vui lòng thử lại sau ít phút."
+                        : "Không đăng nhập được. Vui lòng kiểm tra kết nối mạng và thử lại.";
                 errorMessage.classList.remove('hidden');
             } finally {
                 // Trả lại trạng thái nút ban đầu
@@ -337,9 +336,8 @@
                 console.error("Lỗi ghi log đăng xuất:", err);
             }
 
-            // Xóa dữ liệu phiên làm việc
-            sessionStorage.removeItem('isLoggedIn');
-            sessionStorage.removeItem('loggedInName');
+            // Đăng xuất khỏi Firebase và xóa dữ liệu phiên làm việc
+            await adminSignOut();
             checkLoginState();
         };
 
@@ -359,8 +357,7 @@
                     } catch (err) {
                         console.error("Lỗi ghi log timeout:", err);
                     }
-                    sessionStorage.removeItem('isLoggedIn');
-                    sessionStorage.removeItem('loggedInName');
+                    await adminSignOut();
                     checkLoginState();
                     alert("Phiên đăng nhập đã hết hạn do không có thao tác trong 60 phút.");
                 }, 3600000); // 60s
