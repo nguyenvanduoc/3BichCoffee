@@ -7,7 +7,7 @@
     <title>Quản lý Menu - 3BichCoffee</title>
     <script>
         if (sessionStorage.getItem('isLoggedIn') !== 'true') {
-            window.location.replace("login.html"); // Đá về trang đăng nhập
+            window.location.replace("Login.html"); // Đá về trang đăng nhập
         }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -758,7 +758,7 @@
                     sessionStorage.removeItem('isLoggedIn');
                     sessionStorage.removeItem('loggedInName');
                     alert("Phiên đăng nhập đã hết hạn do không có thao tác trong 60 phút.");
-                    window.location.replace("login.html");
+                    window.location.replace("Login.html");
                 }, 3600000); // 60p
             }
         };

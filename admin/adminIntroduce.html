@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
         if (sessionStorage.getItem('isLoggedIn') !== 'true') {
-            window.location.replace("login.html");
+            window.location.replace("Login.html");
         }
     </script>
     <title>Cấu hình Giới Thiệu - 3BichCoffee</title>
@@ -251,7 +251,7 @@
                     sessionStorage.removeItem('isLoggedIn');
                     sessionStorage.removeItem('loggedInName');
                     alert("Phiên đăng nhập đã hết hạn do không có thao tác trong 60 phút.");
-                    window.location.replace("login.html");
+                    window.location.replace("Login.html");
                 }, 3600000); // 60p
             }
         };
