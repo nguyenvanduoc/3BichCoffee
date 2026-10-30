@@ -226,7 +226,6 @@
     <script type="module">
         import { doc, setDoc, collection, onSnapshot, deleteDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { db } from "../firebaseConfig.js";
-        import { requireAdmin, adminSignOut } from "./adminAuth.js";
         const categoriesCol = collection(db, "categories");
 
         let allCategories = [];
@@ -472,7 +471,8 @@
                     } catch (err) {
                         console.error("Lỗi ghi log timeout:", err);
                     }
-                    await adminSignOut();
+                    sessionStorage.removeItem('isLoggedIn');
+                    sessionStorage.removeItem('loggedInName');
                     alert("Phiên đăng nhập đã hết hạn do không có thao tác trong 60 phút.");
                     window.location.replace("Login.html");
                 }, 3600000); // 60p
@@ -486,9 +486,6 @@
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             resetInactivityTimeout();
         }
-
-        // Chưa đăng nhập Firebase thì quay về trang đăng nhập
-        requireAdmin();
     </script>
 </body>
 
