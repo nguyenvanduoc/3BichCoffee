@@ -1,67 +1,123 @@
-import { collection, onSnapshot, doc, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { db } from "./firebaseConfig.js";
+import { anhNhe } from "./anh-nhe.js";
 
-// State lưu trữ dữ liệu tải từ Firebase
+// Firebase được tải SAU khi menu đã hiện, để không làm chậm lần mở trang đầu tiên
+const firebaseReady = Promise.all([
+    import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"),
+    import("./firebaseConfig.js")
+]).then(([fs, cfg]) => ({ ...fs, db: cfg.db }));
+
+// State lưu trữ dữ liệu menu
 window.coffeesData = [];
 window.categoriesData = [];
 
-// 1. TẢI DANH MỤC TỪ FIREBASE
-onSnapshot(collection(db, "categories"), (snapshot) => {
-    window.categoriesData = [];
-    snapshot.forEach(doc => window.categoriesData.push({ id: doc.id, ...doc.data() }));
-    window.categoriesData.sort((a, b) => (a.order || 0) - (b.order || 0));
-    window.renderMenu();
-});
+const MENU_CACHE_KEY = '3bich_menu_cache_v1';
+let coDuLieuThat = { products: false, categories: false };
 
-// 2. TẢI SẢN PHẨM TỪ FIREBASE
-onSnapshot(collection(db, "products"), (snapshot) => {
-    window.coffeesData = [];
-    snapshot.forEach(doc => window.coffeesData.push({ id: doc.id, ...doc.data() }));
+const chuanHoaMon = (c) => ({ ...c, image: anhNhe(c.image) });
+
+function apDungDanhMuc(list) {
+    window.categoriesData = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
+    window.renderMenu();
+}
+
+function apDungMon(list) {
+    window.coffeesData = list.map(chuanHoaMon);
     renderSanPhams();
 
     // Xử lý link trực tiếp vào chi tiết sản phẩm qua URL parameter
-    if (!window.initialProductChecked) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get('id');
-        if (id) {
+    if (!window.initialProductChecked && window.coffeesData.length) {
+        const id = new URLSearchParams(window.location.search).get('id');
+        if (id && window.coffeesData.some(c => c.id === id)) {
             window.xemChiTiet(id, false);
             history.replaceState({ view: 'detail', productId: id }, '', '?id=' + id);
         }
         window.initialProductChecked = true;
     }
-});
+}
 
-// 3. TẢI CẤU HÌNH GIỚI THIỆU TỪ FIREBASE (CẬP NHẬT FOOTER)
-onSnapshot(doc(db, "settings", "introduce"), (docSnap) => {
-    if (docSnap.exists()) {
-        const data = docSnap.data();
-        const desc = data.description || "";
-        const contact = data.contact || "";
-        window.shopAddresses = (data.address || "").split('\n').map(a => a.trim()).filter(Boolean);
-        window.shopHours = data.hours || "";
-        const addressHtml = window.shopAddresses.map((a, i) => `${window.shopAddresses.length > 1 ? `Quầy ${i + 1}` : 'Địa chỉ'}: ${a}<br/>`).join('');
+// Cập nhật chân trang, số điện thoại, địa chỉ cho chatbot
+function apDungGioiThieu(data) {
+    if (!data) return;
+    const desc = data.description || "";
+    const contact = data.contact || "";
+    window.shopAddresses = (data.address || "").split('\n').map(a => a.trim()).filter(Boolean);
+    window.shopHours = data.hours || "";
+    const addressHtml = window.shopAddresses.map((a, i) => `${window.shopAddresses.length > 1 ? `Quầy ${i + 1}` : 'Địa chỉ'}: ${a}<br/>`).join('');
 
-        const footerDesc = document.getElementById('footer-desc');
-        const footerZalo = document.getElementById('footer-zalo');
-        const modalZalo = document.getElementById('modal-zalo');
-        const modalPhone = document.getElementById('modal-phone');
+    const footerDesc = document.getElementById('footer-desc');
+    const footerZalo = document.getElementById('footer-zalo');
+    const modalZalo = document.getElementById('modal-zalo');
+    const modalPhone = document.getElementById('modal-phone');
 
-        if (footerDesc && desc) {
-            footerDesc.innerHTML = `${desc.replace(/\n/g, '<br/>')}<br/><br/>${addressHtml}Liên hệ: ${contact || ''}`;
-        }
+    if (footerDesc && desc) {
+        footerDesc.innerHTML = `${desc.replace(/\n/g, '<br/>')}<br/><br/>${addressHtml}Liên hệ: ${contact || ''}`;
+    }
 
-        if (contact) {
-            const cleanPhone = contact.replace(/\D/g, '');
-            if (cleanPhone) {
-                window.shopPhone = cleanPhone;
-                capNhatGioUI();
-                if (footerZalo) footerZalo.href = `https://zalo.me/${cleanPhone}`;
-                if (modalZalo) modalZalo.href = `https://zalo.me/${cleanPhone}`;
-                if (modalPhone) modalPhone.href = `tel:${cleanPhone}`;
-            }
+    if (contact) {
+        const cleanPhone = contact.replace(/\D/g, '');
+        if (cleanPhone) {
+            window.shopPhone = cleanPhone;
+            capNhatGioUI();
+            if (footerZalo) footerZalo.href = `https://zalo.me/${cleanPhone}`;
+            if (modalZalo) modalZalo.href = `https://zalo.me/${cleanPhone}`;
+            if (modalPhone) modalPhone.href = `tel:${cleanPhone}`;
         }
     }
-});
+}
+
+// Lưu menu mới nhất trên máy khách để lần sau mở là hiện ngay
+let gioiThieuMoiNhat = null;
+function luuMenuCache() {
+    try {
+        localStorage.setItem(MENU_CACHE_KEY, JSON.stringify({
+            categories: window.categoriesData, products: window.coffeesData, introduce: gioiThieuMoiNhat, t: Date.now()
+        }));
+    } catch (e) { /* bỏ qua */ }
+}
+
+// 1. HIỆN MENU NGAY: menu đã lưu trên máy, nếu chưa có thì bản menu tĩnh data/menu.json
+function hienMenuBanDau(d, nguon) {
+    if (!d || !Array.isArray(d.products) || coDuLieuThat.products) return;
+    if (!coDuLieuThat.categories && Array.isArray(d.categories)) apDungDanhMuc(d.categories);
+    apDungMon(d.products);
+    if (!gioiThieuMoiNhat) apDungGioiThieu(d.introduce);
+    console.debug('Menu hiện từ', nguon);
+}
+// (gọi ở cuối file, sau khi các hàm vẽ menu đã được khai báo)
+function khoiDongMenu() {
+    try {
+        const cached = JSON.parse(localStorage.getItem(MENU_CACHE_KEY) || 'null');
+        if (cached && cached.products && cached.products.length) { hienMenuBanDau(cached, 'bộ nhớ máy'); return; }
+    } catch (e) { /* bỏ qua */ }
+    fetch('data/menu.json').then(r => r.ok ? r.json() : null).then(d => hienMenuBanDau(d, 'menu tĩnh')).catch(() => { });
+}
+
+// 2. CẬP NHẬT DỮ LIỆU MỚI NHẤT TỪ FIREBASE (giá, món mới...)
+firebaseReady.then(({ collection, onSnapshot, doc, db }) => {
+    onSnapshot(collection(db, "categories"), (snapshot) => {
+        const list = [];
+        snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
+        coDuLieuThat.categories = true;
+        apDungDanhMuc(list);
+        luuMenuCache();
+    });
+
+    onSnapshot(collection(db, "products"), (snapshot) => {
+        const list = [];
+        snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
+        coDuLieuThat.products = true;
+        apDungMon(list);
+        luuMenuCache();
+    });
+
+    onSnapshot(doc(db, "settings", "introduce"), (docSnap) => {
+        if (docSnap.exists()) {
+            gioiThieuMoiNhat = docSnap.data();
+            apDungGioiThieu(gioiThieuMoiNhat);
+            luuMenuCache();
+        }
+    });
+}).catch(err => console.error('Không tải được Firebase:', err));
 
 // Hàm Format Tiền
 window.formatVND = function (amount) {
@@ -79,12 +135,14 @@ function khoiGia(coffee, size = 'sm') {
 const ANH_LOI = "this.src='https://placehold.co/300x400?text=3BichCoffee'";
 
 // Thẻ món nổi bật (hàng vuốt ngang)
-window.taoTheSanPham = function (coffee) {
+window.taoTheSanPham = function (coffee, i = 99) {
+    // 3 món nổi bật đầu tiên nằm ngay màn hình đầu: tải ngay, ưu tiên cao
+    const tai = i < 3 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
     const badgeSale = coffee.discountPrice ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">Sale</div>` : '';
     return `
         <div class="snap-start shrink-0 w-[42%] sm:w-52 lg:w-60 flex flex-col cursor-pointer group" onclick="xemChiTiet('${coffee.id}')">
             <div class="relative aspect-[3/4] rounded-2xl overflow-hidden bg-coffee-100">
-                <img src="${coffee.image}" alt="${coffee.name}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="${ANH_LOI}">
+                <img src="${coffee.image}" alt="${coffee.name}" ${tai} decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="${ANH_LOI}">
                 ${badgeSale}
             </div>
             <h3 class="mt-3 text-base sm:text-lg font-bold text-coffee-900 leading-snug line-clamp-2 min-h-[2.75rem] sm:min-h-[3.5rem]">${coffee.name}</h3>
@@ -900,6 +958,7 @@ function appendMessage(html, sender, chips) {
 // --- ANALYTICS TRACKING ---
 async function trackVisitorSession() {
     try {
+        const { collection, doc, addDoc, updateDoc, serverTimestamp, db } = await firebaseReady;
         // 1. Lấy IP (Sử dụng ipify)
         let ip = "Unknown";
         try {
@@ -957,6 +1016,9 @@ async function trackVisitorSession() {
         console.error("Lỗi tracking:", error);
     }
 }
+
+// Hiện menu ngay khi mở trang
+khoiDongMenu();
 
 // Chạy tracking khi load trang
 trackVisitorSession();

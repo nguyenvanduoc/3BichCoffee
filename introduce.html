@@ -253,7 +253,9 @@
 
                     const title = data.title || "";
                     const desc = data.description || "";
-                    const media = data.mediaLink || "";
+                    // Ảnh gốc ImgBB nặng -> bản WebP nhẹ tự host
+                    const ANH_GIOI_THIEU = { "https://i.ibb.co/ycNRVy3q/matcha-xoanen.jpg": "IMG/gioi-thieu.webp" };
+                    const media = ANH_GIOI_THIEU[data.mediaLink] || data.mediaLink || "";
                     const address = data.address || "";
                     const hours = data.hours || "";
                     const contact = data.contact || "";
